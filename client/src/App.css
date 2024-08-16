@@ -26,7 +26,33 @@
     transform: rotate(360deg);
   }
 }
+#list {
+  font-family: Arial, Helvetica, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
 
+#list td,
+#list th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+#list tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+#list tr:hover {
+  background-color: #ddd;
+}
+
+#list th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: left;
+  background-color: #0452aa;
+  color: white;
+}
 @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;

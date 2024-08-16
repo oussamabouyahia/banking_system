@@ -1,5 +1,5 @@
 export interface User {
-  userid: number;
+  iduser: number;
   name: string;
   balance: number;
 }

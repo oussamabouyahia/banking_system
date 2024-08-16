@@ -1,11 +1,9 @@
 const connection = require("../database/config");
-var getAllUsers = `SELECT * FROM user `;
-var createUser = "INSERT INTO user (name,balance) VALUES (?,?)";
-var increaseUserBalance = "UPDATE user SET balance=balance+? WHERE iduser=?";
-var decreaseUserBalance = "UPDATE user SET balance=balance-? WHERE iduser=?";
+const queries = require("../database/queries");
+
 const allUsers = (req, res) => {
   try {
-    connection.query(getAllUsers, function (err, result) {
+    connection.query(queries.getAllUsers, function (err, result) {
       if (err) throw err;
       res.status(200).json({ users: result });
     });
@@ -15,11 +13,22 @@ const allUsers = (req, res) => {
       .send(error.message || "internal server issue");
   }
 };
-
+const getBalance = async (req, res) => {
+  const { id } = req.params;
+  try {
+    await new Promise((reject, resolve) => {
+      connection.query(queries.getBalanceByUser, [id], (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+        res.status(200).json({ balance: result[0].balance });
+      });
+    });
+  } catch (error) {}
+};
 const newUser = (req, res) => {
   const { name, balance } = req.body;
   try {
-    connection.query(createUser, [name, balance], (err, result) => {
+    connection.query(queries.createUser, [name, balance], (err, result) => {
       if (err) throw err;
       res.status(201).json({ message: "user created successfully " });
     });
@@ -29,30 +38,56 @@ const newUser = (req, res) => {
       .send(error.message || "internal server issue");
   }
 };
+
 const increaseBalance = async (req, res) => {
   const receiverId = req.params.receiverId;
   const { amount, senderId } = req.body;
+
   try {
-    const firstQuery = await new Promise((resolve, reject) => {
-      connection.query(
-        increaseUserBalance,
-        [amount, receiverId],
-        (err, result) => {
-          if (err) reject(err);
-          resolve(result);
-        }
-      );
+    if (amount <= 0)
+      return res.status(400).send("amount should be positive not NUll");
+    const senderBalance = await new Promise((resolve, reject) => {
+      connection.query(queries.checkBalanceQuery, [senderId], (err, result) => {
+        if (err) return reject(err);
+        resolve(result[0].balance);
+      });
     });
 
-    connection.query(decreaseUserBalance, [amount, senderId], (err, result) => {
-      if (err) throw err;
+    if (senderBalance < amount) {
+      return res.status(400).json({ message: "Insufficient balance" });
+    }
+
+    await new Promise((resolve, reject) => {
+      connection.beginTransaction((err) => {
+        if (err) return reject(err);
+
+        connection.query(
+          queries.increaseUserBalance,
+          [amount, receiverId],
+          (err, result) => {
+            if (err) return connection.rollback(() => reject(err));
+
+            connection.query(
+              queries.decreaseUserBalance,
+              [amount, senderId],
+              (err, result) => {
+                if (err) return connection.rollback(() => reject(err));
+
+                connection.commit((err) => {
+                  if (err) return connection.rollback(() => reject(err));
+                  resolve(result);
+                });
+              }
+            );
+          }
+        );
+      });
     });
 
-    res.status(200).json({ message: "transaction succeed" });
+    res.status(200).json({ message: "Transaction succeeded" });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send(error.message || "internal server issue");
+    res.status(500).send(error.message || "Internal server issue");
   }
 };
-module.exports = { allUsers, newUser, increaseBalance };
+
+module.exports = { allUsers, newUser, increaseBalance, getBalance };

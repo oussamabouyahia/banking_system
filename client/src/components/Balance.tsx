@@ -14,7 +14,7 @@ const Balance: React.FC<BalanceProps> = ({ users }) => {
       <h4>Balance </h4>
       <select onChange={(e) => setName(e.target.value)}>
         {users.map((user) => (
-          <option key={user.userid} value={user?.name}>
+          <option key={user.iduser} value={user?.name}>
             {user?.name}
           </option>
         ))}

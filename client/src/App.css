@@ -53,6 +53,22 @@
   background-color: #0452aa;
   color: white;
 }
+#list .inputbox {
+  position: relative;
+  width: 200px;
+  height: 40px;
+  margin-bottom: 5px;
+  border: 2px solid #000;
+  outline: none;
+  background: dodgerblue;
+  color: #fff;
+  padding: 10px;
+  border-radius: 10px;
+}
+#list .inputbox:hover {
+  background-color: aqua;
+  color: #000;
+}
 @import url("https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@600&display=swap");
 body {
   margin: 0;

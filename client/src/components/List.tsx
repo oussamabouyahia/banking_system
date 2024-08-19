@@ -6,9 +6,8 @@ interface ListProps {
 }
 const List: React.FC<ListProps> = ({ users }) => {
   const navigate = useNavigate();
-  const openTransfertBox = (userid: number) => {
-    console.log(userid);
-    navigate("/transaction", { state: { id: userid } });
+  const openTransfertBox = (userid: number, name: string) => {
+    navigate("/transaction", { state: { id: userid, name: name } });
   };
   return (
     <div>
@@ -30,7 +29,7 @@ const List: React.FC<ListProps> = ({ users }) => {
               <td>
                 <button
                   className="inputbox"
-                  onClick={() => openTransfertBox(user.iduser)}
+                  onClick={() => openTransfertBox(user.iduser, user.name)}
                 >
                   {" "}
                   Transfert money

@@ -6,6 +6,7 @@ interface BalanceProps {
 const Balance: React.FC<BalanceProps> = ({ users }) => {
   const [balance, setBalance] = useState(false);
   const [name, setName] = useState("");
+
   const getBalance = () => {
     setBalance(true);
   };

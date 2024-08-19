@@ -28,6 +28,8 @@ const getBalance = async (req, res) => {
 const newUser = (req, res) => {
   const { name, balance } = req.body;
   try {
+    if (name.length < 3 || balance < 10)
+      return res.status(400).send("incorrect input");
     connection.query(queries.createUser, [name, balance], (err, result) => {
       if (err) throw err;
       res.status(201).json({ message: "user created successfully " });

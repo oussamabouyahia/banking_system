@@ -7,6 +7,7 @@ import axios from "axios";
 import List from "./components/List";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import TransfertForm from "./components/TransfertForm";
+import CreateAccount from "./components/CreateAccount";
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
@@ -22,6 +23,10 @@ function App() {
     {
       path: "/transaction",
       element: <TransfertForm />,
+    },
+    {
+      path: "/createAccount",
+      element: <CreateAccount />,
     },
   ]);
   useEffect(() => {

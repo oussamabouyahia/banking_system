@@ -1,90 +1,76 @@
 const connection = require("../database/config");
 const queries = require("../database/queries");
+const query = require("../database/utility");
 
-const allUsers = (req, res) => {
+//list of users
+const allUsers = async (req, res) => {
   try {
-    connection.query(queries.getAllUsers, function (err, result) {
-      if (err) throw err;
-      res.status(200).json({ users: result });
-    });
+    const users = await query(queries.getAllUsers);
+    res.status(200).json({ users });
   } catch (error) {
     res
       .status(error.status || 500)
       .send(error.message || "internal server issue");
   }
 };
+//get balance by user
 const getBalance = async (req, res) => {
   const { id } = req.params;
   try {
-    await new Promise((reject, resolve) => {
-      connection.query(queries.getBalanceByUser, [id], (err, result) => {
-        if (err) reject(err);
-        resolve(result);
-        res.status(200).json({ balance: result[0].balance });
-      });
-    });
+    const result = await query(queries.getBalanceByUser, [id]);
+    res.status(200).json({ balance: result[0].balance });
   } catch (error) {}
 };
-const newUser = (req, res) => {
+//create user
+const newUser = async (req, res) => {
   const { name, balance } = req.body;
   try {
-    if (name.length < 3 || balance < 10)
+    if (name?.length < 3 || balance < 10)
       return res.status(400).send("incorrect input");
-    connection.query(queries.createUser, [name, balance], (err, result) => {
-      if (err) throw err;
-      res.status(201).json({ message: "user created successfully " });
-    });
+    const result = await query(queries.createUser, [name, balance]);
+    res
+      .status(201)
+      .json({ message: "user created successfully ", user: result[0] });
   } catch (error) {
     res
       .status(error.status || 500)
       .send(error.message || "internal server issue");
   }
 };
-
+//transaction from a user to another
 const increaseBalance = async (req, res) => {
   const receiverId = req.params.receiverId;
   const { amount, senderId } = req.body;
 
   try {
     if (receiverId === senderId)
-      return res.status(400).send("you can not transfert money to yourself");
+      return res.status(400).send("You cannot transfer money to yourself");
     if (amount <= 0)
-      return res.status(400).send("amount should be strictly positive");
-    const senderBalance = await new Promise((resolve, reject) => {
-      connection.query(queries.checkBalanceQuery, [senderId], (err, result) => {
-        if (err) return reject(err);
-        resolve(result[0].balance);
-      });
-    });
+      return res.status(400).send("Amount should be strictly positive");
+
+    const senderBalance = (
+      await query(queries.checkBalanceQuery, [senderId])
+    )[0].balance;
 
     if (senderBalance < amount) {
       return res.status(400).json({ message: "Insufficient balance" });
     }
 
     await new Promise((resolve, reject) => {
-      connection.beginTransaction((err) => {
+      connection.beginTransaction(async (err) => {
         if (err) return reject(err);
 
-        connection.query(
-          queries.increaseUserBalance,
-          [amount, receiverId],
-          (err, result) => {
+        try {
+          await query(queries.increaseUserBalance, [amount, receiverId]);
+          await query(queries.decreaseUserBalance, [amount, senderId]);
+
+          connection.commit((err) => {
             if (err) return connection.rollback(() => reject(err));
-
-            connection.query(
-              queries.decreaseUserBalance,
-              [amount, senderId],
-              (err, result) => {
-                if (err) return connection.rollback(() => reject(err));
-
-                connection.commit((err) => {
-                  if (err) return connection.rollback(() => reject(err));
-                  resolve(result);
-                });
-              }
-            );
-          }
-        );
+            resolve();
+          });
+        } catch (error) {
+          connection.rollback(() => reject(error));
+        }
       });
     });
 
@@ -93,5 +79,50 @@ const increaseBalance = async (req, res) => {
     res.status(500).send(error.message || "Internal server issue");
   }
 };
+//update user account
+const updateAccount = async (req, res) => {
+  const { id } = req.params;
+  const { name, balance } = req.body;
+  try {
+    if (name?.length < 3 || balance < 0)
+      return res.status(400).send("wrong inputs!");
+    const targetUser = await query(queries.getUser, [id]);
 
-module.exports = { allUsers, newUser, increaseBalance, getBalance };
+    const updatedName = name || targetUser.name;
+    const updatedBalance = balance || targetUser.balance;
+    const result = await query(queries.updateUser, [
+      updatedName,
+      updatedBalance,
+      id,
+    ]);
+    res
+      .status(200)
+      .json({ message: "user updated successfully", user: result[0] });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send(error.message || "internal server issue");
+  }
+};
+//delete user account
+const deleteAccount = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await query(queries.deleteUser, [id]);
+    res.status(200).json({ message: "user deleted successfully" });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send(error.message || "internal server issue");
+  }
+};
+
+module.exports = {
+  allUsers,
+  newUser,
+  increaseBalance,
+  getBalance,
+  updateAccount,
+  deleteAccount,
+};

@@ -31,7 +31,6 @@ const List: React.FC<ListProps> = ({ users }) => {
                   className="inputbox"
                   onClick={() => openTransfertBox(user.iduser, user.name)}
                 >
-                  {" "}
                   Transfert money
                 </button>
               </td>

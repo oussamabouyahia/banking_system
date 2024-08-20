@@ -1,25 +1,33 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
+import ConfirmDialog from "./ConfirmDialog";
 const TransfertForm = () => {
   const [amount, setAmount] = useState(0);
+  const [showDialog, setShowDialog] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const transaction = () => {
     const id = location.state.id;
     const senderId = 4;
-    window.confirm("do you confirm the transaction");
-    if (window.confirm()) {
-      axios
-        .post(`http://localhost:8001/user/${id}`, {
-          amount: amount,
-          senderId: senderId,
-        })
-        .then((res) => alert(res.data.message))
-        .catch((err) => alert(err.message));
-    } else {
-      navigate("/list");
-    }
+
+    axios
+      .post(`http://localhost:8001/user/${id}`, {
+        amount: amount,
+        senderId: senderId,
+      })
+      .then((res) => alert(res.data.message))
+      .catch((err) => alert(err.message));
+  };
+  const handleTransaction = () => {
+    transaction();
+    setAmount(0);
+    setShowDialog(false);
+  };
+  const cancelTransaction = () => {
+    setAmount(0);
+    setShowDialog(false);
+    navigate("/list");
   };
   return (
     <div className="center">
@@ -38,10 +46,18 @@ const TransfertForm = () => {
           <input
             type="Button"
             value="confirm transfert"
-            onClick={transaction}
+            onClick={() => setShowDialog(true)}
             onChange={() => {}}
           />
         </div>
+        {showDialog && (
+          <ConfirmDialog
+            title="transaction"
+            message="do you confirm this transaction"
+            onCancel={cancelTransaction}
+            onConfirm={handleTransaction}
+          />
+        )}
       </form>
     </div>
   );

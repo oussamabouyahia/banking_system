@@ -36,6 +36,8 @@
 #list th {
   border: 1px solid #ddd;
   padding: 8px;
+  width: 200px;
+  height: 40px;
 }
 
 #list tr:nth-child(even) {

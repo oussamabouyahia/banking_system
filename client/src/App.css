@@ -1,31 +1,13 @@
-#root {
-  max-width: 1280px;
+/* #root {
+  max-width: auto;
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
-}
 
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
+/* @import url("https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@600&display=swap"); */
+
 #list {
   font-family: Arial, Helvetica, sans-serif;
   border-collapse: collapse;
@@ -60,7 +42,7 @@
   width: 200px;
   height: 40px;
   margin-bottom: 5px;
-  border: 2px solid #000;
+  border: 2px solid #00000070;
   outline: none;
   background: dodgerblue;
   color: #fff;
@@ -71,7 +53,7 @@
   background-color: aqua;
   color: #000;
 }
-@import url("https://fonts.googleapis.com/css2?family=Sansita+Swashed:wght@600&display=swap");
+
 body {
   margin: 0;
   padding: 0;
@@ -80,13 +62,13 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(45deg, rgb(242, 245, 245), rgb(88, 137, 185));
+  /* background: linear-gradient(45deg, rgb(242, 245, 245), rgb(88, 137, 185)); */
   font-family: "Sansita Swashed", cursive;
 }
 .center {
   position: relative;
   padding: 50px 50px;
-  background: #fff;
+  /* background: #fff; */
   border-radius: 10px;
 }
 .center h1 {
@@ -133,8 +115,10 @@ body {
   transform: translateX(-13px) translateY(-35px);
   font-size: 1em;
 }
+
 .center .inputbox [type="button"] {
-  width: 70%;
+  width: 80%;
+
   background: dodgerblue;
   color: #fff;
   border: #fff;
@@ -142,17 +126,16 @@ body {
 .center .inputbox:hover [type="button"] {
   background: linear-gradient(45deg, greenyellow, dodgerblue);
 }
-
-@media (prefers-reduced-motion: no-preference) {
+/* @media (prefers-reduced-motion: no-preference) {
   a:nth-of-type(2) .logo {
     animation: logo-spin infinite 20s linear;
   }
-}
+} */
 
 .card {
   padding: 2em;
 }
 
 .read-the-docs {
-  color: #888;
+  color: white;
 }

@@ -8,9 +8,17 @@ import List from "./components/List";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import TransfertForm from "./components/TransfertForm";
 import CreateAccount from "./components/CreateAccount";
+import Dashboard from "./components/dashboard/Dashboard";
+import UpdateAccount from "./components/update/UpdateAccount";
 
 function App() {
   const [users, setUsers] = useState<User[]>([]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:8001/user")
+      .then((res) => setUsers(res.data.users));
+  }, []);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -28,12 +36,15 @@ function App() {
       path: "/createAccount",
       element: <CreateAccount />,
     },
+    {
+      path: "/dashboard",
+      element: <Dashboard />,
+    },
+    {
+      path: "/update-account",
+      element: <UpdateAccount />,
+    },
   ]);
-  useEffect(() => {
-    axios
-      .get("http://localhost:8001/user")
-      .then((res) => setUsers(res.data.users));
-  }, []);
 
   return (
     <>

@@ -12,7 +12,7 @@ const TransfertForm = () => {
     const senderId = 4;
 
     axios
-      .post(`http://localhost:8001/user/${id}`, {
+      .post(`http://localhost:8001/user/transfert/${id}`, {
         amount: amount,
         senderId: senderId,
       })

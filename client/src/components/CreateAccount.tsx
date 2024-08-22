@@ -8,6 +8,7 @@ const CreateAccount = () => {
   const [nameError, setNameError] = useState("");
   const [amountError, setAmountError] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+
   const createNewAccount = () => {
     axios
       .post("http://localhost:8001/user", { name: name, balance: amount })
@@ -36,7 +37,9 @@ const CreateAccount = () => {
       setAmountError("");
     }
   };
+
   const isDisabled = amount < 10 || name.length < 3;
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setShowDialog(true); // Show the confirmation dialog
@@ -52,110 +55,85 @@ const CreateAccount = () => {
     setAmount(0);
     setName(""); // Hide the dialog without creating the account
   };
+
   return (
-    <form onSubmit={handleSubmit} style={styles.form}>
-      <h3 style={styles.heading}>Create New Account</h3>
+    <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md"
+      >
+        <h3 className="text-2xl font-semibold text-gray-800 text-center mb-6">
+          Create New Account
+        </h3>
 
-      <label htmlFor="fname" style={styles.label}>
-        Name
-      </label>
-      <input
-        type="text"
-        id="fname"
-        name="firstname"
-        value={name}
-        placeholder="Three characters required for your name"
-        required
-        minLength={3}
-        onChange={handleNameChange}
-        style={styles.input}
-      />
-      {nameError && <p style={styles.error}>{nameError}</p>}
+        <div className="mb-4">
+          <label
+            htmlFor="fname"
+            className="block text-gray-700 font-medium mb-2"
+          >
+            Name
+          </label>
+          <input
+            type="text"
+            id="fname"
+            name="firstname"
+            value={name}
+            placeholder="Three characters required for your name"
+            required
+            minLength={3}
+            onChange={handleNameChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          {nameError && (
+            <p className="text-red-500 text-sm mt-2">{nameError}</p>
+          )}
+        </div>
 
-      <label htmlFor="deposit" style={styles.label}>
-        Deposit
-      </label>
-      <input
-        type="number"
-        id="deposit"
-        name="deposit"
-        value={amount}
-        required
-        min={10}
-        onChange={handleAmountChange}
-        style={styles.input}
-      />
-      {amountError && <p style={styles.error}>{amountError}</p>}
+        <div className="mb-6">
+          <label
+            htmlFor="deposit"
+            className="block text-gray-700 font-medium mb-2"
+          >
+            Deposit
+          </label>
+          <input
+            type="number"
+            id="deposit"
+            name="deposit"
+            value={amount}
+            required
+            min={10}
+            onChange={handleAmountChange}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
+          />
+          {amountError && (
+            <p className="text-red-500 text-sm mt-2">{amountError}</p>
+          )}
+        </div>
 
-      <input
-        type="submit"
-        value="Submit"
-        disabled={isDisabled}
-        style={{
-          ...styles.submitButton,
-          ...(isDisabled ? styles.submitButtonDisabled : {}),
-        }}
-      />
-      {showDialog && (
-        <ConfirmDialog
-          title="Confirm Account Creation"
-          message="Do you confirm the creation of the new account?"
-          onConfirm={handleConfirm}
-          onCancel={handleCancel}
-        />
-      )}
-    </form>
+        <button
+          type="submit"
+          disabled={isDisabled}
+          className={`w-full py-2 px-4 rounded-lg font-semibold transition-colors duration-300 ease-in-out ${
+            isDisabled
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-green-500 hover:bg-green-600 text-white"
+          }`}
+        >
+          Submit
+        </button>
+
+        {showDialog && (
+          <ConfirmDialog
+            title="Confirm Account Creation"
+            message="Do you confirm the creation of the new account?"
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+          />
+        )}
+      </form>
+    </div>
   );
-};
-
-const styles: { [key: string]: React.CSSProperties } = {
-  form: {
-    width: "400px",
-    margin: "0 auto",
-    padding: "20px",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    boxShadow: "0 0 10px rgba(0, 0, 0, 0.1)",
-    backgroundColor: "#f9f9f9",
-  },
-  heading: {
-    textAlign: "center",
-    marginBottom: "20px",
-    color: "#333",
-  },
-  label: {
-    display: "block",
-    marginBottom: "5px",
-    color: "#555",
-  },
-  input: {
-    width: "90%",
-    padding: "10px",
-    marginBottom: "10px",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-    fontSize: "14px",
-  },
-  error: {
-    color: "red",
-    fontSize: "12px",
-    marginBottom: "10px",
-  },
-  submitButton: {
-    width: "100%",
-    padding: "10px",
-    backgroundColor: "#4CAF50",
-    color: "white",
-    border: "none",
-    borderRadius: "4px",
-    fontSize: "16px",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
-  },
-  submitButtonDisabled: {
-    backgroundColor: "#ccc",
-    cursor: "not-allowed",
-  },
 };
 
 export default CreateAccount;

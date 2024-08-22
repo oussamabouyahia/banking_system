@@ -1,23 +1,33 @@
 import { Link } from "react-router-dom";
-import "./Dashboard.css";
 
 const Dashboard = () => {
   return (
-    <div className="dashboard-container">
-      <h1 className="dashboard-title">My Dashboard</h1>
-      <div className="dashboard-buttons">
-        <Link to="/" className="dashboard-button">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
+      <h1 className="text-4xl font-bold mb-8 text-gray-800">My Dashboard</h1>
+      <div className="w-80 flex flex-col space-y-4">
+        <Link
+          to="/"
+          className="w-full bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out text-center"
+        >
           My Balance
         </Link>
-
-        <Link to="/list" className="dashboard-button">
+        <Link
+          to="/list"
+          className="w-full bg-green-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-green-600 transition duration-300 ease-in-out text-center"
+        >
           List of Beneficiaries
         </Link>
-        <Link to="/update-account" className="dashboard-button">
-          Update My account
+        <Link
+          to="/update-account"
+          className="w-full bg-yellow-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-yellow-600 transition duration-300 ease-in-out text-center"
+        >
+          Update My Account
         </Link>
-        <Link to="/update-account" className="dashboard-button">
-          Delete My account
+        <Link
+          to="/delete-account"
+          className="w-full bg-red-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-red-600 transition duration-300 ease-in-out text-center"
+        >
+          Delete My Account
         </Link>
       </div>
     </div>

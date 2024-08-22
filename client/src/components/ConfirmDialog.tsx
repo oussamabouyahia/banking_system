@@ -1,10 +1,12 @@
 import React from "react";
+
 interface ConfirmProps {
   title: string;
   message: string;
   onConfirm: () => void;
   onCancel: () => void;
 }
+
 const ConfirmDialog = ({
   title,
   message,
@@ -46,21 +48,28 @@ const styles: { [key: string]: React.CSSProperties } = {
     backgroundColor: "#fff",
     padding: "20px",
     borderRadius: "8px",
-    width: "300px",
+    width: "600px",
     boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)",
     textAlign: "center",
+    display: "flex",
+    flexDirection: "column", // Ensure a column layout for the children
+    alignItems: "center", // Center items horizontally
   },
   title: {
     marginBottom: "10px",
     color: "#333",
+    fontSize: "18px",
+    fontWeight: "bold",
   },
   message: {
     marginBottom: "20px",
     color: "#555",
+    fontSize: "16px",
   },
   buttons: {
     display: "flex",
     justifyContent: "space-between",
+    width: "100%", // Ensure the buttons take full width of the container
   },
   confirmButton: {
     backgroundColor: "#4CAF50",
@@ -69,6 +78,8 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: "10px 20px",
     borderRadius: "4px",
     cursor: "pointer",
+    flex: 1, // Make the button expand to take equal space
+    marginRight: "10px",
   },
   cancelButton: {
     backgroundColor: "#ccc",
@@ -77,6 +88,7 @@ const styles: { [key: string]: React.CSSProperties } = {
     padding: "10px 20px",
     borderRadius: "4px",
     cursor: "pointer",
+    flex: 1, // Make the button expand to take equal space
   },
 };
 

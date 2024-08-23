@@ -8,9 +8,9 @@ const validateUserInput = [
   body("password")
     .isLength({ min: 6 })
     .withMessage("Password must be longer than 5 characters"),
-  body("balance")
-    .isFloat({ gt: 10 })
-    .withMessage("Balance must be greater than 10"),
+  // body("balance")
+  //   .isFloat({ gt: 10 })
+  //   .withMessage("Balance must be greater than 10"),
 
   // Middleware to check for validation errors
   (req, res, next) => {

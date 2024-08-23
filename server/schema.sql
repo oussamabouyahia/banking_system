@@ -25,12 +25,12 @@ CREATE TABLE IF NOT EXISTS `bankschema`.`user` (
   `email` VARCHAR(45) NOT NULL,
   `password` VARCHAR(200) NOT NULL,
   `name` VARCHAR(45) NOT NULL,
-  `balance` DECIMAL(10,0) NOT NULL DEFAULT '0',
+  `balance` DECIMAL(10,0) NULL DEFAULT '0',
   PRIMARY KEY (`iduser`),
   UNIQUE INDEX `iduser_UNIQUE` (`iduser` ASC) VISIBLE,
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 14
+AUTO_INCREMENT = 18
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 

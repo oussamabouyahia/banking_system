@@ -1,12 +1,49 @@
 import { useState } from "react";
-
+import axios from "axios";
+import Register from "./Register";
+import Login from "./Login";
 const AuthPage = () => {
   const [isRegister, setIsRegister] = useState(true);
+  const [userRegistration, setUserRegistration] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [userLogin, setUserLogin] = useState({ email: "", password: "" });
 
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
-
+  const handleRegistrationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setUserRegistration((prev) => ({ ...prev, [name]: value }));
+  };
+  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const name = e.target.name;
+    const value = e.target.value;
+    setUserLogin((prev) => ({ ...prev, [name]: value }));
+  };
+  const registrationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    console.log(userRegistration);
+    axios
+      .post("http://localhost:8001/user", userRegistration)
+      .then((res) => {
+        alert(res.data.message);
+        setIsRegister(false);
+      })
+      .catch((err) => console.log(err.message));
+  };
+  const loginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    axios
+      .post("http://localhost:8001/user/login", userLogin)
+      .then((res) => {
+        console.log(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
@@ -16,81 +53,20 @@ const AuthPage = () => {
 
         {/* Register Form */}
         {isRegister && (
-          <form>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">
-                Name
-              </label>
-              <input
-                type="text"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Your name"
-              />
-            </div>
-
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Your email"
-              />
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-gray-700 font-medium mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Your password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition duration-300"
-            >
-              Register
-            </button>
-          </form>
+          <Register
+            registrationSubmit={registrationSubmit}
+            handleRegistrationChange={handleRegistrationChange}
+            userRegistration={userRegistration}
+          />
         )}
 
         {/* Sign In Form */}
         {!isRegister && (
-          <form>
-            <div className="mb-4">
-              <label className="block text-gray-700 font-medium mb-2">
-                Email
-              </label>
-              <input
-                type="email"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Your email"
-              />
-            </div>
-
-            <div className="mb-6">
-              <label className="block text-gray-700 font-medium mb-2">
-                Password
-              </label>
-              <input
-                type="password"
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-                placeholder="Your password"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition duration-300"
-            >
-              Sign In
-            </button>
-          </form>
+          <Login
+            handleLoginChange={handleLoginChange}
+            userLogin={userLogin}
+            loginSubmit={loginSubmit}
+          />
         )}
 
         <div className="mt-6 text-center">

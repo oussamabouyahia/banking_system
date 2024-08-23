@@ -5,8 +5,9 @@ const queries = {
   decreaseUserBalance: "UPDATE user SET balance=balance-? WHERE iduser=?",
   checkBalanceQuery: "SELECT balance FROM user WHERE iduser=?",
   getAllUsers: `SELECT * FROM user `,
-  createUser: "INSERT INTO user (name,balance) VALUES (?,?)",
+  createUser: "INSERT INTO user (email,password,name,balance) VALUES (?,?,?,?)",
   updateUser: "UPDATE user SET name=?,balance=? WHERE iduser=?",
   deleteUser: "DELETE FROM user WHERE iduser=?",
+  findUserByEmail: "SELECT * FROM user WHERE email=?",
 };
 module.exports = queries;

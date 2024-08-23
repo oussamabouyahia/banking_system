@@ -1,7 +1,8 @@
 const connection = require("../database/config");
 const queries = require("../database/queries");
 const query = require("../database/utility");
-
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 //list of users
 const allUsers = async (req, res) => {
   try {
@@ -23,11 +24,15 @@ const getBalance = async (req, res) => {
 };
 //create user
 const newUser = async (req, res) => {
-  const { name, balance } = req.body;
+  const { email, password, name, balance } = req.body;
   try {
-    if (name?.length < 3 || balance < 10)
-      return res.status(400).send("incorrect input");
-    const result = await query(queries.createUser, [name, balance]);
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const result = await query(queries.createUser, [
+      email,
+      hashedPassword,
+      name,
+      balance,
+    ]);
     res
       .status(201)
       .json({ message: "user created successfully ", user: result[0] });
@@ -117,6 +122,37 @@ const deleteAccount = async (req, res) => {
       .send(error.message || "internal server issue");
   }
 };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const existingUser = await query(queries.findUserByEmail, [email]);
+    if (!existingUser[0])
+      return res.status(404).json({
+        message: `${email} not found! register if you don't have an account`,
+      });
+    const matchPassword = await bcrypt.compare(
+      password,
+      existingUser[0].password
+    );
+    if (!matchPassword) {
+      return res
+        .status(401)
+        .json({ message: "unauthorized access : wrong password" });
+    }
+    const accessToken = jwt.sign(
+      { id: existingUser[0].iduser },
+      process.env.ACCESS_TOKEN_SECRET,
+      {
+        expiresIn: "60s",
+      }
+    );
+    res.status(200).json({ message: "login successfully", accessToken });
+  } catch (error) {
+    res
+      .status(error.status || 500)
+      .send(error.message || "internal server issue");
+  }
+};
 
 module.exports = {
   allUsers,
@@ -125,4 +161,5 @@ module.exports = {
   getBalance,
   updateAccount,
   deleteAccount,
+  login,
 };

@@ -6,7 +6,7 @@ const Dashboard = () => {
       <h1 className="text-4xl font-bold mb-8 text-gray-800">My Dashboard</h1>
       <div className="w-80 flex flex-col space-y-4">
         <Link
-          to="/"
+          to="/balance"
           className="w-full bg-blue-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out text-center"
         >
           My Balance

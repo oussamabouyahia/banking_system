@@ -2,6 +2,11 @@ import { useState } from "react";
 import axios from "axios";
 import Register from "./Register";
 import Login from "./Login";
+import Alert from "../Alert";
+function validateEmail(email: string) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
 const AuthPage = () => {
   const [isRegister, setIsRegister] = useState(true);
   const [userRegistration, setUserRegistration] = useState({
@@ -10,28 +15,81 @@ const AuthPage = () => {
     password: "",
   });
   const [userLogin, setUserLogin] = useState({ email: "", password: "" });
-
+  const [nameError, setNameError] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertColor, setAlertColor] = useState<"red" | "green">("green");
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
   const handleRegistrationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     const value = e.target.value;
-    setUserRegistration((prev) => ({ ...prev, [name]: value }));
+    setUserRegistration((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    if (name === "name") {
+      if (value.length < 3) {
+        setNameError("Name should be at least 3 characters");
+      } else {
+        setNameError("");
+      }
+    }
+
+    if (name === "email") {
+      if (!validateEmail(value)) {
+        setEmailError("Email should be valid");
+      } else {
+        setEmailError("");
+      }
+    }
+
+    if (name === "password") {
+      if (value.length < 6) {
+        setPasswordError("Password should be at least 6 characters");
+      } else {
+        setPasswordError("");
+      }
+    }
   };
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.target.name;
     const value = e.target.value;
     setUserLogin((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "email") {
+      if (!validateEmail(value)) {
+        setEmailError("Email should be valid");
+      } else {
+        setEmailError("");
+      }
+    }
+
+    if (name === "password") {
+      if (value.length < 6) {
+        setPasswordError("Password should be at least 6 characters");
+      } else {
+        setPasswordError("");
+      }
+    }
   };
   const registrationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(userRegistration);
+
     axios
       .post("http://localhost:8001/user", userRegistration)
       .then((res) => {
-        alert(res.data.message);
+        setAlertMessage(res.data.message);
+        setShowAlert(true);
         setIsRegister(false);
+        setTimeout(() => {
+          setShowAlert(false);
+          setAlertColor("green");
+        }, 3000);
       })
       .catch((err) => console.log(err.message));
   };
@@ -40,13 +98,27 @@ const AuthPage = () => {
     axios
       .post("http://localhost:8001/user/login", userLogin)
       .then((res) => {
-        console.log(res.data);
+        localStorage.setItem("bankToken", res.data.accessToken);
+        setAlertMessage(res.data.message);
+        setShowAlert(true);
+        setTimeout(() => setShowAlert(false), 3000);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response) {
+          setAlertMessage(err.response.data.errors || "An error occurred");
+          setShowAlert(true);
+          setAlertColor("red");
+          setTimeout(() => {
+            setShowAlert(false);
+            setAlertColor("green");
+          }, 3000);
+        }
+      });
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
+        {showAlert && <Alert message={alertMessage} color={alertColor} />}
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           {isRegister ? "Register" : "Sign In"}
         </h2>
@@ -57,6 +129,9 @@ const AuthPage = () => {
             registrationSubmit={registrationSubmit}
             handleRegistrationChange={handleRegistrationChange}
             userRegistration={userRegistration}
+            nameError={nameError}
+            passwordError={passwordError}
+            emailError={emailError}
           />
         )}
 
@@ -66,6 +141,8 @@ const AuthPage = () => {
             handleLoginChange={handleLoginChange}
             userLogin={userLogin}
             loginSubmit={loginSubmit}
+            emailError={emailError}
+            passwordError={passwordError}
           />
         )}
 

@@ -1,13 +1,27 @@
+import Button from "../Button";
+
 interface RegisterProps {
   userRegistration: { name: string; email: string; password: string };
   handleRegistrationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   registrationSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  nameError: string;
+  emailError: string;
+  passwordError: string;
 }
 const Register = ({
   userRegistration,
   handleRegistrationChange,
   registrationSubmit,
+  nameError,
+  emailError,
+  passwordError,
 }: RegisterProps) => {
+  const isDisabled =
+    nameError.length > 0 ||
+    emailError.length > 0 ||
+    passwordError.length > 0 ||
+    userRegistration.name.trim().length === 0 ||
+    userRegistration.password.trim().length === 0;
   return (
     <form onSubmit={registrationSubmit}>
       <div className="mb-4">
@@ -20,6 +34,7 @@ const Register = ({
           onChange={handleRegistrationChange}
           value={userRegistration.name}
         />
+        {nameError && <p className="text-red-500 text-sm mt-2">{nameError}</p>}
       </div>
 
       <div className="mb-4">
@@ -32,6 +47,9 @@ const Register = ({
           onChange={handleRegistrationChange}
           value={userRegistration.email}
         />
+        {emailError && (
+          <p className="text-red-500 text-sm mt-2">{emailError}</p>
+        )}
       </div>
 
       <div className="mb-6">
@@ -44,14 +62,12 @@ const Register = ({
           onChange={handleRegistrationChange}
           value={userRegistration.password}
         />
+        {passwordError && (
+          <p className="text-red-500 text-sm mt-2">{passwordError}</p>
+        )}
       </div>
 
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition duration-300"
-      >
-        Register
-      </button>
+      <Button isDisabled={isDisabled} text="Register" />
     </form>
   );
 };

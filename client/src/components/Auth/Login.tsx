@@ -1,10 +1,23 @@
 import React from "react";
+import Button from "../Button";
 interface LoginProps {
   userLogin: { email: string; password: string };
   handleLoginChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   loginSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  emailError: string;
+  passwordError: string;
 }
-const Login = ({ loginSubmit, handleLoginChange, userLogin }: LoginProps) => {
+const Login = ({
+  loginSubmit,
+  handleLoginChange,
+  userLogin,
+  emailError,
+  passwordError,
+}: LoginProps) => {
+  const isDisabled =
+    emailError.length > 0 ||
+    passwordError.length > 0 ||
+    userLogin.password.trim().length === 0;
   return (
     <form onSubmit={loginSubmit}>
       <div className="mb-4">
@@ -31,12 +44,7 @@ const Login = ({ loginSubmit, handleLoginChange, userLogin }: LoginProps) => {
         />
       </div>
 
-      <button
-        type="submit"
-        className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-md shadow-md hover:bg-blue-600 transition duration-300"
-      >
-        Sign In
-      </button>
+      <Button isDisabled={isDisabled} text="Sign in" />
     </form>
   );
 };

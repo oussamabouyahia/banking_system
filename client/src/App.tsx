@@ -10,7 +10,7 @@ import Dashboard from "./components/dashboard/Dashboard";
 import UpdateAccount from "./components/update/UpdateAccount";
 import Header from "./components/Header";
 import ErrorPage from "./components/ErrorPage";
-import AuthPage from "./components/AuthPage";
+import AuthPage from "./components/Auth/AuthPage";
 
 // Layout Component
 function Layout() {

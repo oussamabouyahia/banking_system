@@ -42,18 +42,18 @@ const CreateAccount = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setShowDialog(true); // Show the confirmation dialog
+    setShowDialog(true);
   };
 
   const handleConfirm = () => {
-    setShowDialog(false); // Hide the dialog
-    createNewAccount(); // Proceed with account creation
+    setShowDialog(false);
+    createNewAccount();
   };
 
   const handleCancel = () => {
     setShowDialog(false);
     setAmount(0);
-    setName(""); // Hide the dialog without creating the account
+    setName("");
   };
 
   return (

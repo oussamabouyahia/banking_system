@@ -146,11 +146,37 @@ const login = async (req, res) => {
         expiresIn: "60s",
       }
     );
-    res.status(200).json({ message: "login successfully", accessToken });
+    // Set the JWT in an HttpOnly cookie
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true, // Prevents JavaScript from accessing the token
+      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      maxAge: 60 * 1000,
+    });
+    res.status(200).json({
+      message: "login successfully",
+      existingUser: existingUser[0],
+    });
   } catch (error) {
     res
       .status(error.status || 500)
       .send(error.message || "internal server issue");
+  }
+};
+const findUser = async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const user = await query(queries.findUserById, [userId]);
+    if (!user[0]) return res.status(404).json({ message: "User not found" });
+    res
+      .status(200)
+      .json({
+        iduser: user[0].iduser,
+        email: user[0].email,
+        name: user[0].name,
+        balance: user[0].balance,
+      });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server issue" });
   }
 };
 
@@ -162,4 +188,5 @@ module.exports = {
   updateAccount,
   deleteAccount,
   login,
+  findUser,
 };

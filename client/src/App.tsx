@@ -9,7 +9,7 @@ import CreateAccount from "./components/CreateAccount";
 import Dashboard from "./components/dashboard/Dashboard";
 import UpdateAccount from "./components/update/UpdateAccount";
 import Header from "./components/Header";
-import ErrorPage from "./components/ErrorPage";
+import ErrorPage from "./components/Utilities Components/ErrorPage";
 import AuthPage from "./components/Auth/AuthPage";
 
 // Layout Component

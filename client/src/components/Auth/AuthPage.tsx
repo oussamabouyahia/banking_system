@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import Register from "./Register";
 import Login from "./Login";
-import Alert from "../Alert";
+import Alert from "../Utilities Components/Alert";
 function validateEmail(email: string) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -98,7 +98,8 @@ const AuthPage = () => {
     axios
       .post("http://localhost:8001/user/login", userLogin)
       .then((res) => {
-        localStorage.setItem("bankToken", res.data.accessToken);
+        // localStorage.setItem("bankToken", res.data.accessToken);
+        // localStorage.setItem("userId", res.data.existingUser.iduser);
         setAlertMessage(res.data.message);
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 3000);

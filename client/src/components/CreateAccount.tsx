@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import ConfirmDialog from "./ConfirmDialog";
+import ConfirmDialog from "./Utilities Components/ConfirmDialog";
 
 const CreateAccount = () => {
   const [name, setName] = useState("");

@@ -9,5 +9,6 @@ const queries = {
   updateUser: "UPDATE user SET name=?,balance=? WHERE iduser=?",
   deleteUser: "DELETE FROM user WHERE iduser=?",
   findUserByEmail: "SELECT * FROM user WHERE email=?",
+  findUserById: "SELECT * FROM user WHERE iduser=?",
 };
 module.exports = queries;

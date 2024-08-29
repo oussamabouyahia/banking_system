@@ -81,7 +81,7 @@ const AuthPage = () => {
     e.preventDefault();
 
     axios
-      .post("http://localhost:8001/user", userRegistration)
+      .post("/api/user", userRegistration)
       .then((res) => {
         setAlertMessage(res.data.message);
         setShowAlert(true);
@@ -96,10 +96,10 @@ const AuthPage = () => {
   const loginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     axios
-      .post("http://localhost:8001/user/login", userLogin)
+      .post("/api/user/login", userLogin)
       .then((res) => {
         // localStorage.setItem("bankToken", res.data.accessToken);
-        // localStorage.setItem("userId", res.data.existingUser.iduser);
+        localStorage.setItem("userId", res.data.existingUser.iduser);
         setAlertMessage(res.data.message);
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 3000);

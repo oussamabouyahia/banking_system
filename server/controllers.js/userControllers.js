@@ -148,13 +148,19 @@ const login = async (req, res) => {
     );
     // Set the JWT in an HttpOnly cookie
     res.cookie("accessToken", accessToken, {
-      httpOnly: true, // Prevents JavaScript from accessing the token
-      secure: process.env.NODE_ENV === "production", // Use secure cookies in production
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
       maxAge: 60 * 1000,
+      sameSite: "Lax",
     });
     res.status(200).json({
       message: "login successfully",
-      existingUser: existingUser[0],
+      existingUser: {
+        iduser: existingUser[0].iduser,
+        name: existingUser[0].name,
+        balance: existingUser[0].balance,
+        email: existingUser[0].email,
+      },
     });
   } catch (error) {
     res
@@ -167,14 +173,14 @@ const findUser = async (req, res) => {
   try {
     const user = await query(queries.findUserById, [userId]);
     if (!user[0]) return res.status(404).json({ message: "User not found" });
-    res
-      .status(200)
-      .json({
+    res.status(200).json({
+      user: {
         iduser: user[0].iduser,
         email: user[0].email,
         name: user[0].name,
         balance: user[0].balance,
-      });
+      },
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server issue" });
   }

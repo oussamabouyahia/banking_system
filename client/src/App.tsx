@@ -7,10 +7,11 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import TransfertForm from "./components/TransfertForm";
 import CreateAccount from "./components/CreateAccount";
 import Dashboard from "./components/dashboard/Dashboard";
-import UpdateAccount from "./components/update/UpdateAccount";
+
 import Header from "./components/Header";
 import ErrorPage from "./components/Utilities Components/ErrorPage";
 import AuthPage from "./components/Auth/AuthPage";
+import Profile from "./components/update/Profile";
 
 // Layout Component
 function Layout() {
@@ -28,9 +29,7 @@ function App() {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:8001/user")
-      .then((res) => setUsers(res.data.users));
+    axios.get("/api/user").then((res) => setUsers(res.data.users));
   }, []);
 
   const router = createBrowserRouter([
@@ -70,8 +69,8 @@ function App() {
           errorElement: <ErrorPage />,
         },
         {
-          path: "/update-account",
-          element: <UpdateAccount />,
+          path: "/profile",
+          element: <Profile />,
           errorElement: <ErrorPage />,
         },
       ],

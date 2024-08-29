@@ -11,7 +11,7 @@ const CreateAccount = () => {
 
   const createNewAccount = () => {
     axios
-      .post("http://localhost:8001/user", { name: name, balance: amount })
+      .post("/api/user", { name: name, balance: amount })
       .then((res) => alert(res.data.message))
       .catch((err) => alert(err.message));
     setAmount(0);

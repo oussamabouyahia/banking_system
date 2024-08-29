@@ -14,7 +14,11 @@ const validateUserInput = require("../middlewares/validateUser");
 const validateLogin = require("../middlewares/validateLogin");
 const authenticated = require("../middlewares/authenticationUser");
 router.route("/").get(allUsers).post(validateUserInput, newUser);
-router.route("/:id").get(getBalance).put(updateAccount).delete(deleteAccount);
+router
+  .route("/:id", authenticated)
+  .get(getBalance)
+  .put(updateAccount)
+  .delete(deleteAccount);
 router.route("/transfert/:receiverId").post(increaseBalance);
 router.route("/login").post(validateLogin, login);
 router.route("/profile/:id").get(authenticated, findUser);

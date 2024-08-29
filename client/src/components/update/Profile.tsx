@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import Button from "../Utilities Components/Button";
+import ConfirmDialog from "../Utilities Components/ConfirmDialog";
+import Alert from "../Utilities Components/Alert";
+
+interface AlertFormType {
+  message: string;
+  color: "green" | "red";
+  show: boolean;
+}
 const id = localStorage.getItem("userId");
 const Profile = () => {
   const [user, setUser] = useState({
@@ -8,6 +17,13 @@ const Profile = () => {
     email: "",
     balance: 0,
   });
+  const [alertForm, setAlertForm] = useState<AlertFormType>({
+    message: "",
+    color: "green",
+    show: false,
+  });
+  const [showDialog, setShowDialog] = useState(false);
+  const [errors, setErrors] = useState({ name: "", balance: "" });
   useEffect(() => {
     axios
       .get(`/api/user/profile/${id}`, {
@@ -27,13 +43,96 @@ const Profile = () => {
       });
   }, []);
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.name;
-    const value = e.target.value;
+    const { name, value } = e.target;
+
     setUser((prev) => ({ ...prev, [name]: value }));
+    if (name === "name") {
+      if (value.length < 3) {
+        setErrors((prev) => {
+          return {
+            ...prev,
+            name: "name should no lesser than three characters",
+          };
+        });
+      } else {
+        setErrors((prev) => {
+          return { ...prev, name: "" };
+        });
+      }
+    }
+
+    if (name === "balance") {
+      if (Number(value) < 10) {
+        setErrors((prev) => {
+          return {
+            ...prev,
+            balance: "initial balance should be greater than 10",
+          };
+        });
+      } else {
+        setErrors((prev) => {
+          return { ...prev, balance: "" };
+        });
+      }
+    }
+  };
+  const isDisable = user.name.length < 3 || user.balance < 10;
+  const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    setShowDialog(true);
+  };
+  const handleCancel = () => {
+    setShowDialog(false);
+  };
+  const handleConfirm = () => {
+    axios
+      .put(
+        `/api/user/${id}`,
+        { name: user.name, balance: user.balance },
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        setShowDialog(false);
+        setAlertForm((prev) => ({
+          ...prev,
+          message: res.data.message,
+
+          show: true,
+        }));
+        setTimeout(() => {
+          setAlertForm((prev) => ({
+            ...prev,
+            show: false,
+          }));
+        }, 3000);
+      })
+      .catch((err) => {
+        setAlertForm((prev) => ({
+          ...prev,
+          message: err.response.data.errors || "An error occurred",
+          show: true,
+        }));
+        setTimeout(() => {
+          setAlertForm((prev) => ({
+            ...prev,
+            color: "green",
+            show: false,
+          }));
+        }, 3000);
+      });
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <form className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm">
+      <form
+        className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm"
+        onSubmit={handleUpdate}
+      >
+        {alertForm.show && (
+          <Alert message={alertForm.message} color={alertForm.color} />
+        )}
         <h3 className="text-2xl font-semibold text-gray-800 mb-6">
           {user.name} Profile
         </h3>
@@ -50,8 +149,10 @@ const Profile = () => {
             type="text"
             id="email"
             name="email"
+            readOnly
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+
           <label
             htmlFor="name"
             className="block text-gray-700 font-medium mb-2"
@@ -67,6 +168,9 @@ const Profile = () => {
             placeholder="Your name.."
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-2">{errors.name} </p>
+          )}
         </div>
 
         <div className="mb-6">
@@ -84,14 +188,20 @@ const Profile = () => {
             onChange={handleChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
+          {errors.balance && (
+            <p className="text-red-500 text-sm mt-2">{errors.balance} </p>
+          )}
         </div>
 
-        <button
-          type="submit"
-          className="w-full bg-blue-500 text-white font-semibold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300 ease-in-out"
-        >
-          Update My Account
-        </button>
+        <Button text="update my account" isDisabled={isDisable} />
+        {showDialog && (
+          <ConfirmDialog
+            title="Update Account"
+            message="Do you confirm this modification ?"
+            onConfirm={handleConfirm}
+            onCancel={handleCancel}
+          />
+        )}
       </form>
     </div>
   );

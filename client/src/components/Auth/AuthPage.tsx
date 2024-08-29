@@ -57,8 +57,7 @@ const AuthPage = () => {
     }
   };
   const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.name;
-    const value = e.target.value;
+    const { name, value } = e.target;
     setUserLogin((prev) => ({ ...prev, [name]: value }));
 
     if (name === "email") {

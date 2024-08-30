@@ -1,4 +1,4 @@
-import Button from "../Utilities Components/Button";
+import Button from "../utils Components/Button";
 
 interface RegisterProps {
   userRegistration: { name: string; email: string; password: string };

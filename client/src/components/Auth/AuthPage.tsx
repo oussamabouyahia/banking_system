@@ -2,7 +2,7 @@ import { useState } from "react";
 import axios from "axios";
 import Register from "./Register";
 import Login from "./Login";
-import Alert from "../Utilities Components/Alert";
+import Alert from "../utils Components/Alert";
 function validateEmail(email: string) {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
@@ -25,8 +25,7 @@ const AuthPage = () => {
     setIsRegister(!isRegister);
   };
   const handleRegistrationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const name = e.target.name;
-    const value = e.target.value;
+    const { name, value } = e.target;
     setUserRegistration((prev) => ({
       ...prev,
       [name]: value,

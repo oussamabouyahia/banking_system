@@ -1,5 +1,5 @@
 import React from "react";
-import Button from "../Utilities Components/Button";
+import Button from "../utils Components/Button";
 interface LoginProps {
   userLogin: { email: string; password: string };
   handleLoginChange: (e: React.ChangeEvent<HTMLInputElement>) => void;

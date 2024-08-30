@@ -9,9 +9,10 @@ import CreateAccount from "./components/CreateAccount";
 import Dashboard from "./components/dashboard/Dashboard";
 
 import Header from "./components/Header";
-import ErrorPage from "./components/Utilities Components/ErrorPage";
+import ErrorPage from "./components/utils Components/ErrorPage";
 import AuthPage from "./components/Auth/AuthPage";
 import Profile from "./components/update/Profile";
+import { profileLoader } from "./utils/profileLoader";
 
 // Layout Component
 function Layout() {
@@ -70,6 +71,7 @@ function App() {
         },
         {
           path: "/profile",
+          loader: profileLoader,
           element: <Profile />,
           errorElement: <ErrorPage />,
         },

@@ -1,129 +1,94 @@
-import { useState, useEffect } from "react";
+import { useLoaderData } from "react-router-dom";
+import { useState } from "react";
+import Button from "../utils Components/Button";
+import ConfirmDialog from "../utils Components/ConfirmDialog";
+import Alert from "../utils Components/Alert";
 import axios from "axios";
-import Button from "../Utilities Components/Button";
-import ConfirmDialog from "../Utilities Components/ConfirmDialog";
-import Alert from "../Utilities Components/Alert";
+import { User } from "../../types";
 
 interface AlertFormType {
   message: string;
   color: "green" | "red";
   show: boolean;
 }
-const id = localStorage.getItem("userId");
+
 const Profile = () => {
-  const [user, setUser] = useState({
-    iduser: "",
-    name: "",
-    email: "",
-    balance: 0,
-  });
+  const user = useLoaderData() as User; // Fetch user data from loader
+  const [formData, setFormData] = useState<User>(user);
+
   const [alertForm, setAlertForm] = useState<AlertFormType>({
     message: "",
     color: "green",
     show: false,
   });
   const [showDialog, setShowDialog] = useState(false);
-  const [errors, setErrors] = useState({ name: "", balance: "" });
-  useEffect(() => {
-    axios
-      .get(`/api/user/profile/${id}`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log(res.data);
-        setUser(res.data.user);
-      })
-      .catch((err) => {
-        if (err.response && err.response.status === 401) {
-          // Redirect to login or handle unauthorized access
-          console.log("Session expired. Please log in again.");
-        } else {
-          console.log(err.message);
-        }
-      });
-  }, []);
+  const [errors, setErrors] = useState<{ name: string; balance: string }>({
+    name: "",
+    balance: "",
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
 
-    setUser((prev) => ({ ...prev, [name]: value }));
-    if (name === "name") {
-      if (value.length < 3) {
-        setErrors((prev) => {
-          return {
-            ...prev,
-            name: "name should no lesser than three characters",
-          };
-        });
-      } else {
-        setErrors((prev) => {
-          return { ...prev, name: "" };
-        });
-      }
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    if (name === "name" && value.length < 3) {
+      setErrors((prev) => ({
+        ...prev,
+        name: "name should no lesser than three characters",
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, name: "" }));
     }
 
-    if (name === "balance") {
-      if (Number(value) < 10) {
-        setErrors((prev) => {
-          return {
-            ...prev,
-            balance: "initial balance should be greater than 10",
-          };
-        });
-      } else {
-        setErrors((prev) => {
-          return { ...prev, balance: "" };
-        });
-      }
+    if (name === "balance" && Number(value) < 10) {
+      setErrors((prev) => ({
+        ...prev,
+        balance: "initial balance should be greater than 10",
+      }));
+    } else {
+      setErrors((prev) => ({ ...prev, balance: "" }));
     }
   };
-  const isDisable = user.name.length < 3 || user.balance < 10;
+
+  const isDisable = formData.name.length < 3 || formData.balance < 10;
+
   const handleUpdate = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
     setShowDialog(true);
   };
+
   const handleCancel = () => {
     setShowDialog(false);
   };
+
   const handleConfirm = () => {
     axios
       .put(
-        `/api/user/${id}`,
-        { name: user.name, balance: user.balance },
-        {
-          withCredentials: true,
-        }
+        `/api/user/${user.iduser}`,
+        { name: formData.name, balance: formData.balance },
+        { withCredentials: true }
       )
       .then((res) => {
         setShowDialog(false);
-        setAlertForm((prev) => ({
-          ...prev,
-          message: res.data.message,
-
-          show: true,
-        }));
-        setTimeout(() => {
-          setAlertForm((prev) => ({
-            ...prev,
-            show: false,
-          }));
-        }, 3000);
+        setAlertForm({ message: res.data.message, color: "green", show: true });
+        setTimeout(
+          () => setAlertForm({ message: "", color: "green", show: false }),
+          3000
+        );
       })
       .catch((err) => {
-        setAlertForm((prev) => ({
-          ...prev,
+        setAlertForm({
           message: err.response.data.errors || "An error occurred",
+          color: "red",
           show: true,
-        }));
-        setTimeout(() => {
-          setAlertForm((prev) => ({
-            ...prev,
-            color: "green",
-            show: false,
-          }));
-        }, 3000);
+        });
+        setTimeout(
+          () => setAlertForm({ message: "", color: "green", show: false }),
+          3000
+        );
       });
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <form
@@ -134,7 +99,7 @@ const Profile = () => {
           <Alert message={alertForm.message} color={alertForm.color} />
         )}
         <h3 className="text-2xl font-semibold text-gray-800 mb-6">
-          {user.name} Profile
+          {formData.name} Profile
         </h3>
 
         <div className="mb-4">
@@ -145,7 +110,7 @@ const Profile = () => {
             Email:
           </label>
           <input
-            defaultValue={user.email}
+            defaultValue={formData.email}
             type="text"
             id="email"
             name="email"
@@ -160,7 +125,7 @@ const Profile = () => {
             Name:
           </label>
           <input
-            value={user.name}
+            value={formData.name}
             onChange={handleChange}
             type="text"
             id="name"
@@ -169,7 +134,7 @@ const Profile = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {errors.name && (
-            <p className="text-red-500 text-sm mt-2">{errors.name} </p>
+            <p className="text-red-500 text-sm mt-2">{errors.name}</p>
           )}
         </div>
 
@@ -181,23 +146,24 @@ const Profile = () => {
             Balance:
           </label>
           <input
-            value={user.balance}
+            value={formData.balance}
+            onChange={handleChange}
             type="number"
             id="balance"
             name="balance"
-            onChange={handleChange}
+            placeholder="Enter your initial balance"
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400"
           />
           {errors.balance && (
-            <p className="text-red-500 text-sm mt-2">{errors.balance} </p>
+            <p className="text-red-500 text-sm mt-2">{errors.balance}</p>
           )}
         </div>
 
-        <Button text="update my account" isDisabled={isDisable} />
+        <Button text="Update My Account" isDisabled={isDisable} />
         {showDialog && (
           <ConfirmDialog
             title="Update Account"
-            message="Do you confirm this modification ?"
+            message="Do you confirm this modification?"
             onConfirm={handleConfirm}
             onCancel={handleCancel}
           />

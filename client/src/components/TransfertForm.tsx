@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
-import ConfirmDialog from "./Utilities Components/ConfirmDialog";
+import ConfirmDialog from "./utils Components/ConfirmDialog";
 
 const TransfertForm = () => {
   const [amount, setAmount] = useState(0);

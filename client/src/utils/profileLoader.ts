@@ -1,30 +1,22 @@
-// profileLoader.ts
 import axios from "axios";
 import { LoaderFunctionArgs } from "react-router-dom";
 
-// Define the shape of the user data
-interface UserProfile {
-  iduser: string;
-  name: string;
-  email: string;
-  balance: number;
-}
+import { User } from "../types";
 
-// The loader function with TypeScript
 export const profileLoader = async (
   args: LoaderFunctionArgs
-): Promise<UserProfile> => {
+): Promise<User> => {
   const id = localStorage.getItem("userId");
 
   try {
-    const response = await axios.get<{ user: UserProfile }>(
+    const response = await axios.get<{ user: User }>(
       `/api/user/profile/${id}`,
       {
         withCredentials: true,
       }
     );
 
-    return response.data.user; // Return the user object from response.data
+    return response.data.user;
   } catch (err: any) {
     if (err.response && err.response.status === 401) {
       throw new Response("Session expired. Please log in again.", {

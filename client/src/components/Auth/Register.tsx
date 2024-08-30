@@ -1,7 +1,11 @@
 import Button from "../utils Components/Button";
-
+interface UserFormData {
+  name: string; // Optional for login
+  email: string;
+  password: string;
+}
 interface RegisterProps {
-  userRegistration: { name: string; email: string; password: string };
+  userRegistration: UserFormData;
   handleRegistrationChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   registrationSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   nameError: string;
@@ -20,7 +24,7 @@ const Register = ({
     nameError.length > 0 ||
     emailError.length > 0 ||
     passwordError.length > 0 ||
-    userRegistration.name.trim().length === 0 ||
+    userRegistration?.name.trim().length === 0 ||
     userRegistration.password.trim().length === 0;
   return (
     <form onSubmit={registrationSubmit}>

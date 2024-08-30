@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useState, Dispatch, SetStateAction } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import Register from "./Register";
 import Login from "./Login";
 import Alert from "../utils Components/Alert";
-function validateEmail(email: string) {
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return emailRegex.test(email);
-}
+
+import { validateInput } from "../../utils/validateInputs";
+
 const AuthPage = () => {
   const [isRegister, setIsRegister] = useState(true);
   const [userRegistration, setUserRegistration] = useState({
@@ -21,60 +21,22 @@ const AuthPage = () => {
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
   const [alertColor, setAlertColor] = useState<"red" | "green">("green");
+  const navigate = useNavigate();
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
-  const handleRegistrationChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserRegistration((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+  const handleChange =
+    <T extends object>(setter: Dispatch<SetStateAction<T>>) =>
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      setter((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
 
-    if (name === "name") {
-      if (value.length < 3) {
-        setNameError("Name should be at least 3 characters");
-      } else {
-        setNameError("");
-      }
-    }
+      validateInput(setNameError, setEmailError, setPasswordError, name, value);
+    };
 
-    if (name === "email") {
-      if (!validateEmail(value)) {
-        setEmailError("Email should be valid");
-      } else {
-        setEmailError("");
-      }
-    }
-
-    if (name === "password") {
-      if (value.length < 6) {
-        setPasswordError("Password should be at least 6 characters");
-      } else {
-        setPasswordError("");
-      }
-    }
-  };
-  const handleLoginChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setUserLogin((prev) => ({ ...prev, [name]: value }));
-
-    if (name === "email") {
-      if (!validateEmail(value)) {
-        setEmailError("Email should be valid");
-      } else {
-        setEmailError("");
-      }
-    }
-
-    if (name === "password") {
-      if (value.length < 6) {
-        setPasswordError("Password should be at least 6 characters");
-      } else {
-        setPasswordError("");
-      }
-    }
-  };
   const registrationSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -96,11 +58,11 @@ const AuthPage = () => {
     axios
       .post("/api/user/login", userLogin)
       .then((res) => {
-        // localStorage.setItem("bankToken", res.data.accessToken);
         localStorage.setItem("userId", res.data.existingUser.iduser);
         setAlertMessage(res.data.message);
         setShowAlert(true);
         setTimeout(() => setShowAlert(false), 3000);
+        navigate("/dashboard");
       })
       .catch((err) => {
         if (err.response) {
@@ -126,7 +88,7 @@ const AuthPage = () => {
         {isRegister && (
           <Register
             registrationSubmit={registrationSubmit}
-            handleRegistrationChange={handleRegistrationChange}
+            handleRegistrationChange={handleChange(setUserRegistration)}
             userRegistration={userRegistration}
             nameError={nameError}
             passwordError={passwordError}
@@ -137,7 +99,7 @@ const AuthPage = () => {
         {/* Sign In Form */}
         {!isRegister && (
           <Login
-            handleLoginChange={handleLoginChange}
+            handleLoginChange={handleChange(setUserLogin)}
             userLogin={userLogin}
             loginSubmit={loginSubmit}
             emailError={emailError}

@@ -30,6 +30,9 @@ const Login = ({
           onChange={handleLoginChange}
           value={userLogin.email}
         />
+        {emailError && (
+          <p className="text-red-500 text-sm mt-2">{emailError}</p>
+        )}
       </div>
 
       <div className="mb-6">
@@ -42,6 +45,9 @@ const Login = ({
           onChange={handleLoginChange}
           value={userLogin.password}
         />
+        {passwordError && (
+          <p className="text-red-500 text-sm mt-2">{passwordError}</p>
+        )}
       </div>
 
       <Button isDisabled={isDisabled} text="Sign in" />

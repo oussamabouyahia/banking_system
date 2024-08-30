@@ -46,7 +46,8 @@ function App() {
         },
         {
           path: "/balance",
-          element: <Balance users={users} />,
+          element: <Balance />,
+          loader: profileLoader,
           errorElement: <ErrorPage />,
         },
         {

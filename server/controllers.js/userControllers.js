@@ -50,8 +50,8 @@ const increaseBalance = async (req, res) => {
   try {
     if (receiverId === senderId)
       return res.status(400).send("You cannot transfer money to yourself");
-    if (amount <= 0)
-      return res.status(400).send("Amount should be strictly positive");
+    if (amount < 10)
+      return res.status(400).send("Amount should be at least 10");
 
     const senderBalance = (
       await query(queries.checkBalanceQuery, [senderId])

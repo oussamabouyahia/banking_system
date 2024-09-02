@@ -6,11 +6,7 @@ import Alert from "../utils Components/Alert";
 import axios from "axios";
 import { User } from "../../types";
 
-interface AlertFormType {
-  message: string;
-  color: "green" | "red";
-  show: boolean;
-}
+import { AlertFormType } from "../../types";
 
 const Profile = () => {
   const user = useLoaderData() as User; // Fetch user data from loader

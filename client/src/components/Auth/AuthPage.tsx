@@ -1,4 +1,4 @@
-import { useState, Dispatch, SetStateAction } from "react";
+import { useState, Dispatch, SetStateAction, useContext } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Register from "./Register";
@@ -6,6 +6,7 @@ import Login from "./Login";
 import Alert from "../utils Components/Alert";
 
 import { validateInput } from "../../utils/validateInputs";
+import { UserContext } from "../../Contexts/User";
 
 const AuthPage = () => {
   const [isRegister, setIsRegister] = useState(true);
@@ -22,6 +23,7 @@ const AuthPage = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertColor, setAlertColor] = useState<"red" | "green">("green");
   const navigate = useNavigate();
+  const setLogged = useContext(UserContext)?.setLogged;
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
@@ -61,8 +63,12 @@ const AuthPage = () => {
         localStorage.setItem("userId", res.data.existingUser.iduser);
         setAlertMessage(res.data.message);
         setShowAlert(true);
-        setTimeout(() => setShowAlert(false), 3000);
-        navigate("/dashboard");
+        setLogged(true);
+        setTimeout(() => {
+          setShowAlert(false);
+          navigate("/dashboard");
+          console.log(setLogged);
+        }, 3000);
       })
       .catch((err) => {
         if (err.response) {

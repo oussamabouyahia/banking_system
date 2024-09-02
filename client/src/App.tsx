@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { User } from "./types";
 import Balance from "./components/Balance";
 import axios from "axios";
@@ -7,14 +7,13 @@ import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import TransfertForm from "./components/TransfertForm";
 import CreateAccount from "./components/CreateAccount";
 import Dashboard from "./components/dashboard/Dashboard";
-
+import { UserContext } from "./Contexts/User";
 import Header from "./components/Header";
 import ErrorPage from "./components/utils Components/ErrorPage";
 import AuthPage from "./components/Auth/AuthPage";
 import Profile from "./components/update/Profile";
 import { profileLoader } from "./utils/profileLoader";
 
-// Layout Component
 function Layout() {
   return (
     <>
@@ -32,7 +31,8 @@ function App() {
   useEffect(() => {
     axios.get("/api/user").then((res) => setUsers(res.data.users));
   }, []);
-
+  const userContext = useContext(UserContext);
+  const logged = userContext?.logged;
   const router = createBrowserRouter([
     {
       path: "/",
@@ -67,7 +67,7 @@ function App() {
         },
         {
           path: "/dashboard",
-          element: <Dashboard />,
+          element: logged ? <Dashboard /> : <AuthPage />,
           errorElement: <ErrorPage />,
         },
         {
@@ -78,7 +78,7 @@ function App() {
         },
       ],
     },
-    // Catch-all route for undefined paths
+
     {
       path: "*",
       element: <ErrorPage />,

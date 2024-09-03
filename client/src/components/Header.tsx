@@ -1,11 +1,23 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { UserContext } from "../Contexts/User";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
+  };
+
+  const navigate = useNavigate();
+  const { logged, setLogged } = useContext(UserContext);
+
+  const handleLogout = () => {
+    localStorage.removeItem("userId");
+    setLogged(false);
+    navigate("/");
   };
 
   return (
@@ -20,7 +32,7 @@ const Header = () => {
         </div>
 
         {/* Navigation Section for Larger Screens */}
-        <nav className="hidden md:flex space-x-4">
+        <nav className="hidden md:flex items-center space-x-4">
           <Link to={"/"} className="text-white hover:underline">
             Home
           </Link>
@@ -33,6 +45,34 @@ const Header = () => {
           <Link to={"/update-account"} className="text-white hover:underline">
             My Account
           </Link>
+          {logged && (
+            <div className="relative group">
+              <button
+                onClick={handleLogout}
+                className="text-white hover:text-red-500 ml-4"
+              >
+                {/* Logout Icon */}
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+                  ></path>
+                </svg>
+              </button>
+              {/* Tooltip */}
+              <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-sm rounded px-2 py-1">
+                Logout
+              </div>
+            </div>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -94,6 +134,37 @@ const Header = () => {
             >
               My Account
             </Link>
+            {logged && (
+              <div className="relative group">
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    toggleMenu();
+                  }}
+                  className="text-white hover:text-red-500"
+                >
+                  {/* Logout Icon for Mobile */}
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+                    ></path>
+                  </svg>
+                </button>
+                {/* Tooltip for Mobile */}
+                <div className="absolute left-1/2 transform -translate-x-1/2 bottom-full mb-2 hidden group-hover:block bg-black text-white text-sm rounded px-2 py-1">
+                  Logout
+                </div>
+              </div>
+            )}
           </nav>
         </div>
       )}

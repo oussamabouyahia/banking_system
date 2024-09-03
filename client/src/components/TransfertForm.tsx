@@ -26,10 +26,10 @@ const TransfertForm = () => {
       })
       .then((res) => {
         setShowAlert({ message: res.data.message, color: "green", show: true });
-        setTimeout(
-          () => setShowAlert({ message: "", color: "green", show: false }),
-          3000
-        );
+        setTimeout(() => {
+          setShowAlert({ message: "", color: "green", show: false });
+          navigate("/list");
+        }, 3000);
       })
       .catch((err) => {
         setShowAlert({

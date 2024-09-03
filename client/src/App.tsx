@@ -29,7 +29,11 @@ function App() {
   const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
-    axios.get("/api/user").then((res) => setUsers(res.data.users));
+    axios
+      .get("/api/user", {
+        withCredentials: true,
+      })
+      .then((res) => setUsers(res.data.users));
   }, []);
   const userContext = useContext(UserContext);
   const logged = userContext?.logged;
@@ -46,18 +50,18 @@ function App() {
         },
         {
           path: "/balance",
-          element: <Balance />,
+          element: logged ? <Balance /> : <AuthPage />,
           loader: profileLoader,
           errorElement: <ErrorPage />,
         },
         {
           path: "/list",
-          element: <List users={users} />,
+          element: logged ? <List users={users} /> : <AuthPage />,
           errorElement: <ErrorPage />,
         },
         {
           path: "/transaction",
-          element: <TransfertForm />,
+          element: logged ? <TransfertForm /> : <AuthPage />,
           errorElement: <ErrorPage />,
         },
         {
@@ -73,7 +77,7 @@ function App() {
         {
           path: "/profile",
           loader: profileLoader,
-          element: <Profile />,
+          element: logged ? <Profile /> : <AuthPage />,
           errorElement: <ErrorPage />,
         },
       ],

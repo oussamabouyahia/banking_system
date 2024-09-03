@@ -122,6 +122,7 @@ const deleteAccount = async (req, res) => {
       .send(error.message || "internal server issue");
   }
 };
+//user login and generate token and set a cookie
 const login = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -139,22 +140,25 @@ const login = async (req, res) => {
         .status(401)
         .json({ message: "unauthorized access : wrong password" });
     }
+    //generate token
+    const expirationTime = 180;
     const accessToken = jwt.sign(
       { id: existingUser[0].iduser },
       process.env.ACCESS_TOKEN_SECRET,
       {
-        expiresIn: "60s",
+        expiresIn: expirationTime + "s",
       }
     );
     // Set the JWT in an HttpOnly cookie
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      maxAge: 60 * 1000,
+      maxAge: expirationTime * 1000,
       sameSite: "Lax",
     });
     res.status(200).json({
       message: "login successfully",
+      tokenDuration: expirationTime * 1000,
       existingUser: {
         iduser: existingUser[0].iduser,
         name: existingUser[0].name,

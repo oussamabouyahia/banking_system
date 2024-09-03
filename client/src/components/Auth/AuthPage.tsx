@@ -27,6 +27,12 @@ const AuthPage = () => {
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
+  const handleLogout = () => {
+    if (setLogged) setLogged(false);
+    localStorage.removeItem("userId");
+
+    navigate("/");
+  };
   const handleChange =
     <T extends object>(setter: Dispatch<SetStateAction<T>>) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,15 +66,18 @@ const AuthPage = () => {
     axios
       .post("/api/user/login", userLogin)
       .then((res) => {
+        setLogged(true);
         localStorage.setItem("userId", res.data.existingUser.iduser);
         setAlertMessage(res.data.message);
         setShowAlert(true);
-        setLogged(true);
+
+        setTimeout(() => {
+          handleLogout();
+        }, res.data.tokenDuration);
         setTimeout(() => {
           setShowAlert(false);
           navigate("/dashboard");
-          console.log(setLogged);
-        }, 3000);
+        }, 2000);
       })
       .catch((err) => {
         if (err.response) {

@@ -1,7 +1,5 @@
-import { useContext, useEffect, useState } from "react";
-import { User } from "./types";
+import { useContext, useEffect } from "react";
 import Balance from "./components/Balance";
-import axios from "axios";
 import List from "./components/List";
 import { createBrowserRouter, RouterProvider, Outlet } from "react-router-dom";
 import TransfertForm from "./components/TransfertForm";
@@ -13,6 +11,8 @@ import ErrorPage from "./components/utils Components/ErrorPage";
 import AuthPage from "./components/Auth/AuthPage";
 import Profile from "./components/update/Profile";
 import { profileLoader } from "./utils/profileLoader";
+import ProtectedRoute from "./components/utils Components/ProtectedRoute";
+import { usersLoader } from "./utils/usersLoader";
 
 function Layout() {
   return (
@@ -26,17 +26,21 @@ function Layout() {
 }
 
 function App() {
-  const [users, setUsers] = useState<User[]>([]);
-
+  const { logged, setLogged } = useContext(UserContext);
   useEffect(() => {
-    axios
-      .get("/api/user", {
-        withCredentials: true,
-      })
-      .then((res) => setUsers(res.data.users));
-  }, []);
-  const userContext = useContext(UserContext);
-  const logged = userContext?.logged;
+    if (logged) {
+      console.log(logged);
+      const tokenDuration = localStorage.getItem("tokenDuration");
+      const timeout = setTimeout(() => {
+        setLogged(false);
+        localStorage.removeItem("userId");
+      }, Number(tokenDuration));
+
+      // Cleanup on component unmount or when logged changes
+      return () => clearTimeout(timeout);
+    }
+  }, [logged, setLogged]);
+
   const router = createBrowserRouter([
     {
       path: "/",
@@ -50,18 +54,32 @@ function App() {
         },
         {
           path: "/balance",
-          element: logged ? <Balance /> : <AuthPage />,
+          element: (
+            <ProtectedRoute authenticated={logged}>
+              <Balance />
+            </ProtectedRoute>
+          ),
           loader: profileLoader,
           errorElement: <ErrorPage />,
         },
         {
           path: "/list",
-          element: logged ? <List users={users} /> : <AuthPage />,
+          loader: usersLoader,
+          element: (
+            <ProtectedRoute authenticated={logged}>
+              <List />
+            </ProtectedRoute>
+          ),
+
           errorElement: <ErrorPage />,
         },
         {
           path: "/transaction",
-          element: logged ? <TransfertForm /> : <AuthPage />,
+          element: (
+            <ProtectedRoute authenticated={logged}>
+              <TransfertForm />
+            </ProtectedRoute>
+          ),
           errorElement: <ErrorPage />,
         },
         {
@@ -71,13 +89,21 @@ function App() {
         },
         {
           path: "/dashboard",
-          element: logged ? <Dashboard /> : <AuthPage />,
+          element: (
+            <ProtectedRoute authenticated={logged}>
+              <Dashboard />
+            </ProtectedRoute>
+          ),
           errorElement: <ErrorPage />,
         },
         {
           path: "/profile",
           loader: profileLoader,
-          element: logged ? <Profile /> : <AuthPage />,
+          element: (
+            <ProtectedRoute authenticated={logged}>
+              <Profile />
+            </ProtectedRoute>
+          ),
           errorElement: <ErrorPage />,
         },
       ],

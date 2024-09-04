@@ -18,7 +18,7 @@ const Dashboard = () => {
           List of Beneficiaries
         </Link>
         <Link
-          to="/update-account"
+          to="/profile"
           className="w-full bg-yellow-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-yellow-600 transition duration-300 ease-in-out text-center"
         >
           Update My Account

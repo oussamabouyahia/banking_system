@@ -27,12 +27,7 @@ const AuthPage = () => {
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
-  const handleLogout = () => {
-    if (setLogged) setLogged(false);
-    localStorage.removeItem("userId");
 
-    navigate("/");
-  };
   const handleChange =
     <T extends object>(setter: Dispatch<SetStateAction<T>>) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -68,16 +63,13 @@ const AuthPage = () => {
       .then((res) => {
         setLogged(true);
         localStorage.setItem("userId", res.data.existingUser.iduser);
+        localStorage.setItem("tokenDuration", res.data.tokenDuration);
         setAlertMessage(res.data.message);
         setShowAlert(true);
-
-        setTimeout(() => {
-          handleLogout();
-        }, res.data.tokenDuration);
         setTimeout(() => {
           setShowAlert(false);
-          navigate("/dashboard");
-        }, 2000);
+        }, 1500);
+        navigate("/dashboard");
       })
       .catch((err) => {
         if (err.response) {

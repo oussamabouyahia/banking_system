@@ -1,12 +1,8 @@
-import React from "react";
 import { User } from "../types";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 
-interface ListProps {
-  users: User[];
-}
-
-const List: React.FC<ListProps> = ({ users }) => {
+const List = () => {
+  const users = useLoaderData() as User[];
   const navigate = useNavigate();
   const id = localStorage.getItem("userId");
   const openTransfertBox = (userid: number, name: string) => {

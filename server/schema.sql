@@ -6,16 +6,26 @@ SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,N
 
 -- -----------------------------------------------------
 -- Schema mydb
--- -----------------------------------------------------
--- -----------------------------------------------------
--- Schema bankschema
--- -----------------------------------------------------
 
--- -----------------------------------------------------
 -- Schema bankschema
 -- -----------------------------------------------------
 CREATE SCHEMA IF NOT EXISTS `bankschema` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci ;
 USE `bankschema` ;
+
+-- -----------------------------------------------------
+-- Table `bankschema`.`transactions`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `bankschema`.`transactions` (
+  `idtransactions` INT NOT NULL AUTO_INCREMENT,
+  `amount` DECIMAL(10,0) NOT NULL,
+  `sender` INT NOT NULL,
+  `receiver` INT NOT NULL,
+  PRIMARY KEY (`idtransactions`),
+  UNIQUE INDEX `idtransactions_UNIQUE` (`idtransactions` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8mb4
+COLLATE = utf8mb4_0900_ai_ci;
+
 
 -- -----------------------------------------------------
 -- Table `bankschema`.`user`
@@ -30,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `bankschema`.`user` (
   UNIQUE INDEX `iduser_UNIQUE` (`iduser` ASC) VISIBLE,
   UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE)
 ENGINE = InnoDB
-AUTO_INCREMENT = 18
+AUTO_INCREMENT = 26
 DEFAULT CHARACTER SET = utf8mb4
 COLLATE = utf8mb4_0900_ai_ci;
 

@@ -29,7 +29,6 @@ function App() {
   const { logged, setLogged } = useContext(UserContext);
   useEffect(() => {
     if (logged) {
-      console.log(logged);
       const tokenDuration = localStorage.getItem("tokenDuration");
       const timeout = setTimeout(() => {
         setLogged(false);

@@ -24,14 +24,13 @@ const getBalance = async (req, res) => {
 };
 //create user
 const newUser = async (req, res) => {
-  const { email, password, name, balance } = req.body;
+  const { email, password, name } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
     const result = await query(queries.createUser, [
       email,
       hashedPassword,
       name,
-      balance,
     ]);
     res
       .status(201)
@@ -48,32 +47,46 @@ const increaseBalance = async (req, res) => {
   const { amount, senderId } = req.body;
 
   try {
-    if (receiverId === senderId)
+    // Check if the sender and receiver are the same
+    if (receiverId === senderId) {
       return res.status(400).send("You cannot transfer money to yourself");
-    if (amount < 10)
+    }
+    // Check if the amount is valid
+    if (amount < 10) {
       return res.status(400).send("Amount should be at least 10");
+    }
 
+    // Get sender's balance
     const senderBalance = (
       await query(queries.checkBalanceQuery, [senderId])
     )[0].balance;
 
+    // Check if sender has sufficient balance
     if (senderBalance < amount) {
       return res.status(400).json({ message: "Insufficient balance" });
     }
 
+    // Begin transaction
     await new Promise((resolve, reject) => {
       connection.beginTransaction(async (err) => {
         if (err) return reject(err);
 
         try {
+          // Increase receiver's balance
           await query(queries.increaseUserBalance, [amount, receiverId]);
-          await query(queries.decreaseUserBalance, [amount, senderId]);
 
+          // Decrease sender's balance
+          await query(queries.decreaseUserBalance, [amount, senderId]);
+          //Insert new transaction in the transactions table
+          await query(queries.newTransaction, [amount, senderId, receiverId]);
+          // Commit transaction
           connection.commit((err) => {
             if (err) return connection.rollback(() => reject(err));
+
             resolve();
           });
         } catch (error) {
+          // Rollback transaction if error occurs
           connection.rollback(() => reject(error));
         }
       });
@@ -84,6 +97,7 @@ const increaseBalance = async (req, res) => {
     res.status(500).send(error.message || "Internal server issue");
   }
 };
+
 //update user account
 const updateAccount = async (req, res) => {
   const { id } = req.params;

@@ -68,8 +68,8 @@ const AuthPage = () => {
         setShowAlert(true);
         setTimeout(() => {
           setShowAlert(false);
+          navigate("/dashboard");
         }, 1500);
-        navigate("/dashboard");
       })
       .catch((err) => {
         if (err.response) {

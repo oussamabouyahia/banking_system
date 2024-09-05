@@ -14,7 +14,7 @@ app.use(express.urlencoded({ extended: true }));
 
 // API Routes
 app.use("/user", require("./routes/userRoute")); // Define API routes before static and catch-all
-
+app.use("/transaction", require("./routes/transactionRoute"));
 // Serve static files (use a specific route to avoid conflicts)
 app.use(
   "/static",

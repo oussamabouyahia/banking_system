@@ -1,11 +1,8 @@
 import axios from "axios";
-import { LoaderFunctionArgs } from "react-router-dom";
 
 import { User } from "../types";
 
-export const profileLoader = async (
-  args: LoaderFunctionArgs
-): Promise<User> => {
+export const profileLoader = async (): Promise<User> => {
   const id = localStorage.getItem("userId");
 
   try {

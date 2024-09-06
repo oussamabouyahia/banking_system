@@ -12,6 +12,12 @@ const Dashboard = () => {
           My Balance
         </Link>
         <Link
+          to="/myTransaction"
+          className="w-full bg-pink-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-blue-600 transition duration-300 ease-in-out text-center"
+        >
+          My Transactions
+        </Link>
+        <Link
           to="/list"
           className="w-full bg-green-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-green-600 transition duration-300 ease-in-out text-center"
         >

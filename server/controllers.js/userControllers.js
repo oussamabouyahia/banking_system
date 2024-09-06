@@ -1,6 +1,7 @@
 const connection = require("../database/config");
 const queries = require("../database/queries");
 const query = require("../database/utility");
+const internalError = require("../utils/errorHandler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 //list of users
@@ -9,9 +10,7 @@ const allUsers = async (req, res) => {
     const users = await query(queries.getAllUsers);
     res.status(200).json({ users });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send(error.message || "internal server issue");
+    internalError(res, error);
   }
 };
 //get balance by user
@@ -20,7 +19,9 @@ const getBalance = async (req, res) => {
   try {
     const result = await query(queries.getBalanceByUser, [id]);
     res.status(200).json({ balance: result[0].balance });
-  } catch (error) {}
+  } catch (error) {
+    internalError(res, error);
+  }
 };
 //create user
 const newUser = async (req, res) => {
@@ -36,9 +37,7 @@ const newUser = async (req, res) => {
       .status(201)
       .json({ message: "user created successfully ", user: result[0] });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send(error.message || "internal server issue");
+    internalError(res, error);
   }
 };
 //transaction from a user to another
@@ -118,9 +117,7 @@ const updateAccount = async (req, res) => {
       .status(200)
       .json({ message: "user updated successfully", user: result[0] });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send(error.message || "internal server issue");
+    internalError(res, error);
   }
 };
 //delete user account
@@ -181,9 +178,7 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send(error.message || "internal server issue");
+    internalError(res, error);
   }
 };
 const findUser = async (req, res) => {
@@ -200,7 +195,7 @@ const findUser = async (req, res) => {
       },
     });
   } catch (error) {
-    res.status(500).json({ message: "Internal server issue" });
+    internalError(res, error);
   }
 };
 

@@ -9,3 +9,12 @@ export interface AlertFormType {
   color: "green" | "red";
   show: boolean;
 }
+export interface TransactionType {
+  amount: number;
+  idtransactions: number;
+  receiver: number;
+  receiverName: string;
+  sender: number;
+  senderName: string;
+  transaction_date: string;
+}

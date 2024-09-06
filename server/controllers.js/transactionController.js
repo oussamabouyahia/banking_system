@@ -1,14 +1,13 @@
 const connection = require("../database/config");
 const queries = require("../database/queries");
 const query = require("../database/utility");
+const internalError = require("../utils/errorHandler");
 const transactionsList = async (req, res) => {
   try {
     const transactions = await query(queries.getTransactions);
     res.status(200).json({ transactions });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send(error.message || "internal server issue");
+    internalError(res, error);
   }
 };
 const myTransaction = async (req, res) => {
@@ -18,9 +17,7 @@ const myTransaction = async (req, res) => {
     const myTransaction = await query(queries.getTransactionsByUser, [id, id]);
     res.status(200).json({ myTransaction });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send(error.message || "internal server issue");
+    internalError(res, error);
   }
 };
-module.exports = { transactionsList };
+module.exports = { transactionsList, myTransaction };

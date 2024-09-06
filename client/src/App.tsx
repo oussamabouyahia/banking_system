@@ -13,6 +13,8 @@ import Profile from "./components/update/Profile";
 import { profileLoader } from "./utils/profileLoader";
 import ProtectedRoute from "./components/utils Components/ProtectedRoute";
 import { usersLoader } from "./utils/usersLoader";
+import { transactionsLoader } from "./utils/transactionsLoader";
+import MyTransactions from "./components/MyTransactions";
 
 function Layout() {
   return (
@@ -101,6 +103,16 @@ function App() {
           element: (
             <ProtectedRoute authenticated={logged}>
               <Profile />
+            </ProtectedRoute>
+          ),
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "/myTransaction",
+          loader: transactionsLoader,
+          element: (
+            <ProtectedRoute authenticated={logged}>
+              <MyTransactions />
             </ProtectedRoute>
           ),
           errorElement: <ErrorPage />,

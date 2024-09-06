@@ -12,8 +12,39 @@ const queries = {
   findUserById: "SELECT * FROM user WHERE iduser=?",
   newTransaction:
     "INSERT INTO transactions (amount,sender,receiver) VALUES (?,?,?)",
-  getTransactions: "SELECT * FROM transactions",
-  getTransactionsByUser:
-    "SELECT * FROM transactions WHERE sender=? OR receiver=?",
+  getTransactions: `
+  SELECT 
+    t.idtransactions,
+    t.amount,
+    t.sender,
+    senderUser.name AS senderName,  
+    t.receiver,
+    receiverUser.name AS receiverName,
+     t.transaction_date
+  FROM 
+    transactions t
+  JOIN 
+    user senderUser ON t.sender = senderUser.iduser  -- Join on sender
+  JOIN 
+    user receiverUser ON t.receiver = receiverUser.iduser  -- Join on receiver
+`,
+  getTransactionsByUser: `
+  SELECT 
+    t.idtransactions,
+    t.amount,
+    t.sender,
+    senderUser.name AS senderName,  -- Alias for sender's name
+    t.receiver,
+    receiverUser.name AS receiverName,  -- Alias for receiver's name
+     t.transaction_date
+  FROM 
+    transactions t
+  JOIN 
+    user senderUser ON t.sender = senderUser.iduser  -- Join on sender
+  JOIN 
+    user receiverUser ON t.receiver = receiverUser.iduser  -- Join on receiver
+  WHERE 
+    t.sender = ? OR t.receiver = ?  -- Filter by sender or receiver
+`,
 };
 module.exports = queries;

@@ -19,7 +19,7 @@ router
   .get(getBalance)
   .put(updateAccount)
   .delete(deleteAccount);
-router.route("/transfert/:receiverId").post(increaseBalance);
+router.route("/transfert/:receiverId").post(authenticated, increaseBalance);
 router.route("/login").post(validateLogin, login);
 router.route("/profile/:id").get(authenticated, findUser);
 module.exports = router;

@@ -1,6 +1,11 @@
+import { useNavigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 
 const Dashboard = () => {
+  const navigate = useNavigate();
+  const handleDeleteAccount = () => {
+    navigate("/delete");
+  };
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-4">
       <h1 className="text-4xl font-bold mb-8 text-gray-800">My Dashboard</h1>
@@ -29,12 +34,12 @@ const Dashboard = () => {
         >
           Update My Account
         </Link>
-        <Link
-          to="/delete-account"
+        <button
+          onClick={handleDeleteAccount}
           className="w-full bg-red-500 text-white font-semibold py-3 px-6 rounded-lg shadow-md hover:bg-red-600 transition duration-300 ease-in-out text-center"
         >
           Delete My Account
-        </Link>
+        </button>
       </div>
     </div>
   );

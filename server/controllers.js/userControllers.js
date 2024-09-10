@@ -123,14 +123,28 @@ const updateAccount = async (req, res) => {
 //delete user account
 const deleteAccount = async (req, res) => {
   const { id } = req.params;
+  const { password } = req.body;
 
   try {
+    const user = await query(queries.findUserById, [id]);
+
+    if (!user[0]) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const passwordMatch = await bcrypt.compare(password, user[0].password);
+
+    if (!passwordMatch) {
+      return res
+        .status(401)
+        .json({ message: "failed to delete this account, Incorrect password" });
+    }
+
     await query(queries.deleteUser, [id]);
-    res.status(200).json({ message: "user deleted successfully" });
+
+    res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    res
-      .status(error.status || 500)
-      .send(error.message || "internal server issue");
+    internalError(res, error);
   }
 };
 //user login and generate token and set a cookie

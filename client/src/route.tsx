@@ -13,7 +13,7 @@ import { profileLoader } from "./utils/profileLoader";
 import { usersLoader } from "./utils/usersLoader";
 import { transactionsLoader } from "./utils/transactionsLoader";
 import Layout from "./components/Layout";
-
+import DeleteAccount from "./components/deleteAccount";
 export const createRoutes = (logged: boolean) =>
   createBrowserRouter([
     {
@@ -85,6 +85,16 @@ export const createRoutes = (logged: boolean) =>
           element: (
             <ProtectedRoute authenticated={logged}>
               <MyTransactions />
+            </ProtectedRoute>
+          ),
+          errorElement: <ErrorPage />,
+        },
+        {
+          path: "/delete",
+
+          element: (
+            <ProtectedRoute authenticated={logged}>
+              <DeleteAccount />
             </ProtectedRoute>
           ),
           errorElement: <ErrorPage />,

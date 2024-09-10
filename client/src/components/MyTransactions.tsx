@@ -1,12 +1,20 @@
 import { useLoaderData } from "react-router-dom";
 import { TransactionType } from "../types";
+import BackToDashboardButton from "./utils Components/BackToDashboard";
 
 const MyTransactions = () => {
   const transactions = useLoaderData() as TransactionType[];
   const userId = localStorage.getItem("userId");
-
+  if (transactions.length === 0)
+    return (
+      <>
+        <h3>Your don't have transactions yet</h3>
+        <BackToDashboardButton />
+      </>
+    );
   return (
     <div className="container mx-auto p-4">
+      <BackToDashboardButton />
       <h1 className="text-3xl font-semibold mb-6 text-center">
         My Transactions
       </h1>

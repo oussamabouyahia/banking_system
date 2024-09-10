@@ -60,16 +60,15 @@ const AuthPage = () => {
     e.preventDefault();
     axios
       .post("/api/user/login", userLogin)
-      .then((res) => {
+      .then(async (res) => {
         setLogged(true);
         localStorage.setItem("userId", res.data.existingUser.iduser);
         localStorage.setItem("tokenDuration", res.data.tokenDuration);
         setAlertMessage(res.data.message);
         setShowAlert(true);
-        setTimeout(() => {
-          setShowAlert(false);
-          navigate("/dashboard");
-        }, 1500);
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        setShowAlert(false);
+        navigate("/dashboard");
       })
       .catch((err) => {
         if (err.response) {

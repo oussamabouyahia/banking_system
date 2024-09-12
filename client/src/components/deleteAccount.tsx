@@ -30,8 +30,11 @@ const DeleteAccount = () => {
       navigate("/");
     } catch (error: any) {
       setError(
-        error.response.message || "failed to delete , check your password"
+        error.response.data.message || "failed to delete , check your password"
       );
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+      setPassword("");
+      setError("");
     } finally {
       setIsLoading(false);
     }

@@ -3,10 +3,10 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Register from "./Register";
 import Login from "./Login";
-import Alert from "../utils Components/Alert";
 
 import { validateInput } from "../../utils/validateInputs";
 import { UserContext } from "../../Contexts/User";
+import { AlertContext } from "../../Contexts/AlertContext";
 
 const AuthPage = () => {
   const [isRegister, setIsRegister] = useState(true);
@@ -19,11 +19,10 @@ const AuthPage = () => {
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-  const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
-  const [alertColor, setAlertColor] = useState<"red" | "green">("green");
+
   const navigate = useNavigate();
   const setLogged = useContext(UserContext)?.setLogged;
+  const { setActiveAlert } = useContext(AlertContext);
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
@@ -60,32 +59,34 @@ const AuthPage = () => {
     e.preventDefault();
     axios
       .post("/api/user/login", userLogin)
-      .then(async (res) => {
+      .then((res) => {
         setLogged(true);
         localStorage.setItem("userId", res.data.existingUser.iduser);
         localStorage.setItem("tokenDuration", res.data.tokenDuration);
-        setAlertMessage(res.data.message);
-        setShowAlert(true);
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        setShowAlert(false);
+        // await new Promise((resolve) => setTimeout(resolve, 2000));
+        setActiveAlert((prev) => ({
+          ...prev,
+          show: true,
+          message: res.data.message,
+        }));
+        setTimeout(() => {
+          setActiveAlert((prev) => ({
+            ...prev,
+            show: true,
+            message: res.data.message,
+          }));
+        }, 2000);
         navigate("/dashboard");
       })
       .catch((err) => {
         if (err.response) {
-          setAlertMessage(err.response.data.errors || "An error occurred");
-          setShowAlert(true);
-          setAlertColor("red");
-          setTimeout(() => {
-            setShowAlert(false);
-            setAlertColor("green");
-          }, 3000);
+          console.log(err.response.data.message);
         }
       });
   };
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="max-w-md w-full bg-white p-8 rounded-lg shadow-md">
-        {showAlert && <Alert message={alertMessage} color={alertColor} />}
         <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
           {isRegister ? "Register" : "Sign In"}
         </h2>

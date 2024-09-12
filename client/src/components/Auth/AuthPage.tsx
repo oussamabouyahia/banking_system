@@ -63,24 +63,25 @@ const AuthPage = () => {
         setLogged(true);
         localStorage.setItem("userId", res.data.existingUser.iduser);
         localStorage.setItem("tokenDuration", res.data.tokenDuration);
-        // await new Promise((resolve) => setTimeout(resolve, 2000));
+
         setActiveAlert((prev) => ({
           ...prev,
           show: true,
           message: res.data.message,
+          color: "green",
         }));
-        setTimeout(() => {
-          setActiveAlert((prev) => ({
-            ...prev,
-            show: true,
-            message: res.data.message,
-          }));
-        }, 2000);
+
         navigate("/dashboard");
       })
       .catch((err) => {
         if (err.response) {
-          console.log(err.response.data.message);
+          setActiveAlert((prev) => ({
+            ...prev,
+            show: true,
+            message: err.response.data.message,
+            color: "red",
+          }));
+          setUserLogin({ email: "", password: "" });
         }
       });
   };

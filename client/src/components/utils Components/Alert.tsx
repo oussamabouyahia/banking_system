@@ -17,7 +17,7 @@ const Alert: React.FC<AlertProps> = ({ message, color }) => {
     <div
       className={`border-l-4 p-4 ${selectedColorClass} rounded-md shadow-md`}
     >
-      <p className="text-sm">{message}</p>
+      <p className="text-md text-center">{message}</p>
     </div>
   );
 };

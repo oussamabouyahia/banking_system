@@ -4,6 +4,7 @@ import {
   createContext,
   Dispatch,
   SetStateAction,
+  useEffect,
 } from "react";
 import { AlertFormType } from "../types";
 
@@ -33,6 +34,15 @@ const AlertProvider = ({ children }: ContextProps) => {
     message: "",
     color: "green",
   });
+  useEffect(() => {
+    if (activeAlert.show) {
+      const timer = setTimeout(
+        () => setActiveAlert((prev) => ({ ...prev, show: false })),
+        2000
+      );
+      return () => clearTimeout(timer);
+    }
+  }, [activeAlert.show]);
 
   const alertValue: AlertValueType = { activeAlert, setActiveAlert };
 

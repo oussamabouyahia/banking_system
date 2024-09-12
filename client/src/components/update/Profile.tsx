@@ -1,27 +1,21 @@
 import { useLoaderData } from "react-router-dom";
-import { useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Button from "../utils Components/Button";
 import ConfirmDialog from "../utils Components/ConfirmDialog";
-import Alert from "../utils Components/Alert";
+
 import axios from "axios";
 import { User } from "../../types";
-
-import { AlertFormType } from "../../types";
+import { AlertContext } from "../../Contexts/AlertContext";
 
 const Profile = () => {
   const user = useLoaderData() as User; // Fetch user data from loader
   const [formData, setFormData] = useState<User>(user);
-
-  const [alertForm, setAlertForm] = useState<AlertFormType>({
-    message: "",
-    color: "green",
-    show: false,
-  });
   const [showDialog, setShowDialog] = useState(false);
   const [errors, setErrors] = useState<{ name: string; balance: string }>({
     name: "",
     balance: "",
   });
+  const { setActiveAlert } = useContext(AlertContext);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -66,22 +60,22 @@ const Profile = () => {
       )
       .then((res) => {
         setShowDialog(false);
-        setAlertForm({ message: res.data.message, color: "green", show: true });
-        setTimeout(
-          () => setAlertForm({ message: "", color: "green", show: false }),
-          3000
-        );
+        setActiveAlert((prev) => ({
+          ...prev,
+          show: true,
+          message: res.data.message,
+          color: "green",
+        }));
       })
       .catch((err) => {
-        setAlertForm({
-          message: err.response.data.errors || "An error occurred",
-          color: "red",
-          show: true,
-        });
-        setTimeout(
-          () => setAlertForm({ message: "", color: "green", show: false }),
-          3000
-        );
+        if (err.response) {
+          setActiveAlert((prev) => ({
+            ...prev,
+            show: true,
+            message: err.response.data.message,
+            color: "red",
+          }));
+        }
       });
   };
 
@@ -91,9 +85,6 @@ const Profile = () => {
         className="bg-white p-8 rounded-lg shadow-lg w-full max-w-sm"
         onSubmit={handleUpdate}
       >
-        {alertForm.show && (
-          <Alert message={alertForm.message} color={alertForm.color} />
-        )}
         <h3 className="text-2xl font-semibold text-gray-800 mb-6">
           {formData.name} Profile
         </h3>

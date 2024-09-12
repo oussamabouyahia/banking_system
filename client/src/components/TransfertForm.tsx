@@ -1,17 +1,14 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import ConfirmDialog from "./utils Components/ConfirmDialog";
-import Alert from "./utils Components/Alert";
-import { AlertFormType } from "../types";
+import { AlertContext } from "../Contexts/AlertContext";
+
 const TransfertForm = () => {
   const [amount, setAmount] = useState(0);
   const [showDialog, setShowDialog] = useState(false);
-  const [showAlert, setShowAlert] = useState<AlertFormType>({
-    show: false,
-    message: "",
-    color: "green",
-  });
+  const { setActiveAlert } = useContext(AlertContext);
+
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -25,22 +22,21 @@ const TransfertForm = () => {
         senderId: senderId,
       })
       .then((res) => {
-        setShowAlert({ message: res.data.message, color: "green", show: true });
-        setTimeout(() => {
-          setShowAlert({ message: "", color: "green", show: false });
-          navigate("/list");
-        }, 3000);
+        setActiveAlert((prev) => ({
+          ...prev,
+          show: true,
+          message: res.data.message,
+          color: "green",
+        }));
       })
       .catch((err) => {
-        setShowAlert({
-          message: err.response.data.errors || "error occurred",
-          color: "red",
-          show: true,
-        });
-        setTimeout(
-          () => setShowAlert({ message: "", color: "green", show: false }),
-          3000
-        );
+        if (err.response)
+          setActiveAlert((prev) => ({
+            ...prev,
+            show: true,
+            message: err.response.data.message,
+            color: "red",
+          }));
       });
   };
 
@@ -59,9 +55,6 @@ const TransfertForm = () => {
   return (
     <div className="min-h-screen flex items-center justify-center ">
       <div className="max-w-lg w-full flex flex-col p-8 rounded-lg shadow-lg">
-        {showAlert && (
-          <Alert message={showAlert.message} color={showAlert.color} />
-        )}
         <h1 className="text-2xl font-bold mb-6 text-gray-800 text-center">
           Transfer Money to{" "}
           <span className="text-3xl font-bold underline text-green-400 ">

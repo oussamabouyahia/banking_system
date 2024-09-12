@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+
   const handleDeleteAccount = () => {
     navigate("/delete");
   };

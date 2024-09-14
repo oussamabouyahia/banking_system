@@ -1,11 +1,14 @@
-const connection = require("../database/config");
-const queries = require("../database/queries");
-const query = require("../database/utility");
-const internalError = require("../utils/errorHandler");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import connection from "../database/config";
+import queries from "../database/queries";
+import query from "../database/utility";
+import internalError from "../utils/errorHandler";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import { Request, Response } from "express";
+import dotenv from "dotenv";
+dotenv.config();
 //list of users
-const allUsers = async (req, res) => {
+export const allUsers = async (req: Request, res: Response) => {
   try {
     const users = await query(queries.getAllUsers);
     res.status(200).json({ users });
@@ -14,7 +17,7 @@ const allUsers = async (req, res) => {
   }
 };
 //get balance by user
-const getBalance = async (req, res) => {
+export const getBalance = async (req: Request, res: Response) => {
   const { id } = req.params;
   try {
     const result = await query(queries.getBalanceByUser, [id]);
@@ -24,7 +27,7 @@ const getBalance = async (req, res) => {
   }
 };
 //create user
-const newUser = async (req, res) => {
+export const newUser = async (req: Request, res: Response) => {
   const { email, password, name } = req.body;
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -41,7 +44,7 @@ const newUser = async (req, res) => {
   }
 };
 //transaction from a user to another
-const increaseBalance = async (req, res) => {
+export const increaseBalance = async (req: Request, res: Response) => {
   const receiverId = req.params.receiverId;
   const { amount, senderId } = req.body;
 
@@ -66,7 +69,7 @@ const increaseBalance = async (req, res) => {
     }
 
     // Begin transaction
-    await new Promise((resolve, reject) => {
+    await new Promise((resolve: any, reject) => {
       connection.beginTransaction(async (err) => {
         if (err) return reject(err);
 
@@ -92,13 +95,13 @@ const increaseBalance = async (req, res) => {
     });
 
     res.status(200).json({ message: "Transaction succeeded" });
-  } catch (error) {
+  } catch (error: any) {
     res.status(500).send(error.message || "Internal server issue");
   }
 };
 
 //update user account
-const updateAccount = async (req, res) => {
+export const updateAccount = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, balance } = req.body;
   try {
@@ -121,7 +124,7 @@ const updateAccount = async (req, res) => {
   }
 };
 //delete user account
-const deleteAccount = async (req, res) => {
+export const deleteAccount = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { password } = req.body;
 
@@ -148,7 +151,7 @@ const deleteAccount = async (req, res) => {
   }
 };
 //user login and generate token and set a cookie
-const login = async (req, res) => {
+export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
   try {
     const existingUser = await query(queries.findUserByEmail, [email]);
@@ -169,7 +172,7 @@ const login = async (req, res) => {
     const expirationTime = 180;
     const accessToken = jwt.sign(
       { id: existingUser[0].iduser },
-      process.env.ACCESS_TOKEN_SECRET,
+      process.env.ACCESS_TOKEN_SECRET!,
       {
         expiresIn: expirationTime + "s",
       }
@@ -179,7 +182,7 @@ const login = async (req, res) => {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       maxAge: expirationTime * 1000,
-      sameSite: "Lax",
+      sameSite: "lax",
     });
     res.status(200).json({
       message: "login successfully",
@@ -195,7 +198,7 @@ const login = async (req, res) => {
     internalError(res, error);
   }
 };
-const findUser = async (req, res) => {
+export const findUser = async (req: Request, res: Response) => {
   const userId = req.params.id;
   try {
     const user = await query(queries.findUserById, [userId]);
@@ -211,15 +214,4 @@ const findUser = async (req, res) => {
   } catch (error) {
     internalError(res, error);
   }
-};
-
-module.exports = {
-  allUsers,
-  newUser,
-  increaseBalance,
-  getBalance,
-  updateAccount,
-  deleteAccount,
-  login,
-  findUser,
 };

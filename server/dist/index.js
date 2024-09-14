@@ -1,9 +1,19 @@
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const path = require("path");
-require("dotenv").config();
+import express from "express";
+import cookieParser from "cookie-parser";
+import path from "path";
+import dotenv from "dotenv";
+import { fileURLToPath } from "url";
+import { dirname } from "path";
+
+dotenv.config();
 const port = process.env.PORT || 8001;
-const connection = require("./database/config");
+import connection from "./database/config.js";
+import userRouter from "./routes/userRoute.js";
+import transactionRouter from "./routes/transactionRoute.js";
+
+// Set __dirname in ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const app = express();
 
@@ -13,8 +23,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // API Routes
-app.use("/user", require("./routes/userRoute")); // Define API routes before static and catch-all
-app.use("/transaction", require("./routes/transactionRoute"));
+app.use("/user", userRouter); // Define API routes before static and catch-all
+app.use("/transaction", transactionRouter);
+
 // Serve static files (use a specific route to avoid conflicts)
 app.use(
   "/static",

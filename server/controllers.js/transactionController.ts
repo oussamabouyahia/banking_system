@@ -1,8 +1,8 @@
-const connection = require("../database/config");
-const queries = require("../database/queries");
-const query = require("../database/utility");
-const internalError = require("../utils/errorHandler");
-const transactionsList = async (req, res) => {
+import queries from "../database/queries";
+import query from "../database/utility";
+import { Request, Response } from "express";
+import internalError from "../utils/errorHandler";
+export const transactionsList = async (req: Request, res: Response) => {
   try {
     const transactions = await query(queries.getTransactions);
     res.status(200).json({ transactions });
@@ -10,7 +10,7 @@ const transactionsList = async (req, res) => {
     internalError(res, error);
   }
 };
-const myTransaction = async (req, res) => {
+export const myTransaction = async (req: Request, res: Response) => {
   const { id } = req.params;
 
   try {
@@ -20,4 +20,3 @@ const myTransaction = async (req, res) => {
     internalError(res, error);
   }
 };
-module.exports = { transactionsList, myTransaction };

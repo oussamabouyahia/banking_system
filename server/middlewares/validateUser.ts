@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+import { body, validationResult } from "express-validator";
 
 const validateUserInput = [
   body("email").isEmail().withMessage("Please enter a valid email address"),
@@ -13,7 +13,7 @@ const validateUserInput = [
   //   .withMessage("Balance must be greater than 10"),
 
   // Middleware to check for validation errors
-  (req, res, next) => {
+  (req: any, res: any, next: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array()[0].msg });
@@ -22,4 +22,4 @@ const validateUserInput = [
   },
 ];
 
-module.exports = validateUserInput;
+export default validateUserInput;

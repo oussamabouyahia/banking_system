@@ -1,4 +1,4 @@
-const { body, validationResult } = require("express-validator");
+import { body, validationResult } from "express-validator";
 
 const validateLoginInput = [
   body("email").isEmail().withMessage("Please enter a valid email address"),
@@ -7,7 +7,7 @@ const validateLoginInput = [
     .withMessage("Password must be longer than 5 characters"),
 
   // Middleware to check for validation errors
-  (req, res, next) => {
+  (req: any, res: any, next: any) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array()[0].msg });
@@ -15,5 +15,4 @@ const validateLoginInput = [
     next();
   },
 ];
-
-module.exports = validateLoginInput;
+export default validateLoginInput;

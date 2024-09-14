@@ -1,4 +1,4 @@
-const queries = {
+const queries: any = {
   getUser: "SELECT * FROM user WHERE iduser=?",
   getBalanceByUser: "SELECT balance FROM user WHERE iduser=?",
   increaseUserBalance: "UPDATE user SET balance=balance+? WHERE iduser=?",
@@ -47,4 +47,4 @@ const queries = {
     t.sender = ? OR t.receiver = ?  -- Filter by sender or receiver
 `,
 };
-module.exports = queries;
+export default queries;

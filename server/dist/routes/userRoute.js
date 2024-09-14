@@ -1,5 +1,5 @@
-const express = require("express");
-const {
+import express from "express";
+import {
   allUsers,
   newUser,
   increaseBalance,
@@ -8,18 +8,18 @@ const {
   updateAccount,
   login,
   findUser,
-} = require("../controllers.js/userControllers");
+} from "../controllers.js/userControllers.js";
 const router = express.Router();
-const validateUserInput = require("../middlewares/validateUser");
-const validateLogin = require("../middlewares/validateLogin");
-const authenticated = require("../middlewares/authenticationUser");
+import validateUserInput from "../middlewares/validateUser.js";
+import validateLogin from "../middlewares/validateLogin.js";
+import authenticated from "../middlewares/authenticationUser.js";
 router.route("/").get(allUsers).post(validateUserInput, newUser);
 router
-  .route("/:id", authenticated)
-  .get(getBalance)
-  .put(updateAccount)
+  .route("/:id")
+  .get(authenticated, getBalance)
+  .put(authenticated, updateAccount)
   .delete(deleteAccount);
 router.route("/transfert/:receiverId").post(authenticated, increaseBalance);
 router.route("/login").post(validateLogin, login);
 router.route("/profile/:id").get(authenticated, findUser);
-module.exports = router;
+export default router;

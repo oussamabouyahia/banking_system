@@ -45,15 +45,24 @@ const AuthPage = () => {
     axios
       .post("/api/user", userRegistration)
       .then((res) => {
-        setAlertMessage(res.data.message);
-        setShowAlert(true);
+        setActiveAlert((prev) => ({
+          ...prev,
+          message: res.data.message,
+          color: "green",
+          show: true,
+        }));
+
         setIsRegister(false);
-        setTimeout(() => {
-          setShowAlert(false);
-          setAlertColor("green");
-        }, 3000);
       })
-      .catch((err) => console.log(err.message));
+      .catch((err) => {
+        if (err.response)
+          setActiveAlert((prev) => ({
+            ...prev,
+            message: err.response.data.message,
+            color: "red",
+            show: true,
+          }));
+      });
   };
   const loginSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

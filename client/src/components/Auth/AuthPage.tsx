@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import Register from "./Register";
 import Login from "./Login";
-
 import { validateInput } from "../../utils/validateInputs";
 import { UserContext } from "../../Contexts/User";
 import { AlertContext } from "../../Contexts/AlertContext";
@@ -19,14 +18,12 @@ const AuthPage = () => {
   const [nameError, setNameError] = useState("");
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
-
   const navigate = useNavigate();
   const setLogged = useContext(UserContext)?.setLogged;
   const { setActiveAlert } = useContext(AlertContext);
   const toggleForm = () => {
     setIsRegister(!isRegister);
   };
-
   const handleChange =
     <T extends object>(setter: Dispatch<SetStateAction<T>>) =>
     (e: React.ChangeEvent<HTMLInputElement>) => {

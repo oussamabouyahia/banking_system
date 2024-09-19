@@ -11,10 +11,26 @@
   },
   "dependencies": {
     "@heroicons/react": "^1.0.6",
+    "@progress/kendo-drawing": "latest",
+    "@progress/kendo-intl": "latest",
+    "@progress/kendo-licensing": "latest",
+    "@progress/kendo-popup-common": "latest",
+    "@progress/kendo-react-animation": "latest",
+    "@progress/kendo-react-charts": "latest",
+    "@progress/kendo-react-common": "latest",
+    "@progress/kendo-react-intl": "latest",
+    "@progress/kendo-react-layout": "latest",
+    "@progress/kendo-react-popup": "latest",
+    "@progress/kendo-react-progressbars": "latest",
+    "@progress/kendo-svg-icons": "latest",
     "axios": "^1.7.4",
+    "chart.js": "^4.4.4",
+    "prop-types": "15.8.1",
     "react": "^18.3.1",
+    "react-chartjs-2": "^5.2.0",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.1"
+    "react-router-dom": "^6.26.1",
+    "recharts": "^2.12.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.8.0",

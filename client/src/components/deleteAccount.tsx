@@ -1,84 +1,118 @@
-import { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import { Line } from "react-chartjs-2";
+import { Chart, registerables } from "chart.js";
 
-const DeleteAccount = () => {
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate();
+Chart.register(...registerables);
 
-  const handleDeleteAccount = async () => {
-    if (!password) {
-      setError("Password is required");
-      return;
-    }
+const Dashboard = () => {
+  const [balance, setBalance] = useState(0);
+  const [transactions, setTransactions] = useState([]);
+  const [transactionData, setTransactionData] = useState({});
 
-    setIsLoading(true);
+  useEffect(() => {
+    // Fetch balance and transactions data from your API
+    const fetchData = async () => {
+      // Mock data, replace with actual API calls
+      const balanceData = 1500; // Replace with API call
+      const transactionsData = [
+        { date: "2024-09-01", amount: 200 },
+        { date: "2024-09-05", amount: -100 },
+        { date: "2024-09-10", amount: 300 },
+        { date: "2024-09-15", amount: -50 },
+        { date: "2024-09-20", amount: 100 },
+      ]; // Replace with API call
 
-    try {
-      const userId = localStorage.getItem("userId");
-      // the promise below is just to simulate a real request
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      await axios.delete(`/api/user/${userId}`, {
-        data: { password },
-        withCredentials: true,
+      setBalance(balanceData);
+      setTransactions(transactionsData);
+    };
+
+    fetchData();
+  }, []);
+
+  useEffect(() => {
+    // Format transaction data for the chart
+    if (transactions.length) {
+      const dates = transactions.map((t) => t.date);
+      const amounts = transactions.map((t) => t.amount);
+      setTransactionData({
+        labels: dates,
+        datasets: [
+          {
+            label: "Transactions",
+            data: amounts,
+            fill: false,
+            backgroundColor: "rgba(75,192,192,1)",
+            borderColor: "rgba(75,192,192,1)",
+            tension: 0.2,
+          },
+        ],
       });
-
-      // On success, navigate to home or login page
-      localStorage.removeItem("userId");
-      navigate("/");
-    } catch (error: any) {
-      setError(
-        error.response.data.message || "failed to delete , check your password"
-      );
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      setPassword("");
-      setError("");
-    } finally {
-      setIsLoading(false);
     }
-  };
+  }, [transactions]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white shadow-lg rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Delete Account</h2>
-
-        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
-
-        <div className="mb-4">
-          <label
-            htmlFor="password"
-            className="block text-gray-700 font-medium mb-2"
-          >
-            Enter your password to confirm:
-          </label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Your password"
-          />
+    <div className="flex flex-col items-center h-screen bg-gradient-to-r from-blue-50 to-gray-100 p-8 space-y-8">
+      <div className="w-full max-w-xl p-6 bg-white shadow-lg rounded-lg">
+        <h1 className="text-4xl font-bold mb-6 text-center text-gray-800">
+          My Dashboard
+        </h1>
+        <div className="bg-blue-100 text-blue-900 text-xl font-bold p-4 rounded-lg shadow-md text-center mb-6">
+          Current Balance: ${balance.toFixed(2)}
         </div>
-
-        <button
-          onClick={handleDeleteAccount}
-          disabled={isLoading}
-          className={`w-full py-2 px-4 rounded-lg text-white font-semibold ${
-            isLoading
-              ? "bg-gray-400 cursor-not-allowed"
-              : "bg-red-600 hover:bg-red-700"
-          } transition-colors duration-300 ease-in-out`}
+        <div className="p-4 bg-white rounded-lg shadow-md">
+          <h2 className="text-lg font-semibold text-gray-800 mb-4 text-center">
+            Transaction History
+          </h2>
+          {transactionData.labels && (
+            <Line
+              data={transactionData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                },
+              }}
+            />
+          )}
+        </div>
+      </div>
+      <div className="w-full max-w-xl space-y-4">
+        <Link
+          to="/balance"
+          className="block py-3 px-6 text-white bg-blue-500 hover:bg-blue-600 rounded-lg shadow-md text-center"
         >
-          {isLoading ? "Deleting..." : "Delete Account"}
-        </button>
+          My Balance
+        </Link>
+        <Link
+          to="/transactions"
+          className="block py-3 px-6 text-white bg-pink-500 hover:bg-pink-600 rounded-lg shadow-md text-center"
+        >
+          My Transactions
+        </Link>
+        <Link
+          to="/beneficiaries"
+          className="block py-3 px-6 text-white bg-green-500 hover:bg-green-600 rounded-lg shadow-md text-center"
+        >
+          List of Beneficiaries
+        </Link>
+        <Link
+          to="/update-account"
+          className="block py-3 px-6 text-white bg-yellow-500 hover:bg-yellow-600 rounded-lg shadow-md text-center"
+        >
+          Update My Account
+        </Link>
+        <Link
+          to="/delete"
+          className="block py-3 px-6 text-white bg-red-500 hover:bg-red-600 rounded-lg shadow-md text-center"
+        >
+          Delete My Account
+        </Link>
       </div>
     </div>
   );
 };
 
-export default DeleteAccount;
+export default Dashboard;

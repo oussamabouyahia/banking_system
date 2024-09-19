@@ -14,6 +14,16 @@ import { usersLoader } from "./utils/usersLoader";
 import { transactionsLoader } from "./utils/transactionsLoader";
 import Layout from "./components/Layout";
 import DeleteAccount from "./components/deleteAccount";
+
+//Dashboard need two loaders
+const combinedDashboardLoader = async () => {
+  const [profileData, transactionsData] = await Promise.all([
+    profileLoader(),
+    transactionsLoader(),
+  ]);
+
+  return { profileData, transactionsData };
+};
 export const createRoutes = (logged: boolean) =>
   createBrowserRouter([
     {
@@ -62,6 +72,8 @@ export const createRoutes = (logged: boolean) =>
         },
         {
           path: "/dashboard",
+          loader: combinedDashboardLoader,
+
           element: (
             <ProtectedRoute authenticated={logged}>
               <Dashboard />
